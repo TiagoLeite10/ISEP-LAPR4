@@ -1,0 +1,37 @@
+@startuml
+
+title Class Diagram (SSD) - US 1010
+
+'Classes
+class CreateRecurringClassUI <<presentation>> {
+    doShow()
+}
+
+class JpaCourseRepository <<persistence>> {}
+class InMemoryCourseRepository <<persistence>> {}
+
+class Course <<domain>> {}
+class RecurringClass <<domain>> {}
+
+class CreateRecurringClassController <<application>> {}
+
+class ListCourseService <<application>>{}
+
+interface CourseRepository <<repositories>> {}
+
+'Navigation
+CreateRecurringClassUI --> CreateRecurringClassController : theController
+CreateRecurringClassController --> CourseRepository : repo
+CreateRecurringClassController --> ListCourseService : service
+
+CreateRecurringClassController --> Course : course
+CreateRecurringClassController --> RecurringClass : recurringClass
+JpaCourseRepository -> CourseRepository
+InMemoryCourseRepository -> CourseRepository
+
+'Dependencies
+CreateRecurringClassUI -[dashed]-> Course
+CreateRecurringClassUI -[dashed]-> RecurringClass
+ListCourseService -[dashed]-> CourseRepository
+
+@enduml

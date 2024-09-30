@@ -1,0 +1,26 @@
+@startuml
+
+title Class Diagram (CD) - US 1006
+
+'Classes
+class ListCourseUI <<presentation>> {
+    doShow()
+}
+class ListCourseController <<application>> {}
+class ListCourseService <<application>> {}
+class Course <<domain>> {}
+
+interface CourseRepository <<repositories>> {}
+
+'Navigation
+ListCourseUI -> ListCourseController : theController
+
+ListCourseController -> Course : course
+ListCourseController -> CourseRepository : repo
+ListCourseController -> ListCourseService : service
+
+'Dependencies
+ListCourseUI -[dashed]-> Course
+ListCourseService -[dashed]-> CourseRepository
+
+@enduml

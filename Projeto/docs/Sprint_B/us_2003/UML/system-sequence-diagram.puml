@@ -1,0 +1,26 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 2003
+autonumber
+
+actor "Professor" as Actor
+participant ":Sistema" as System
+
+activate Actor
+
+Actor -> System : Pede para listar todos os exames de uma disciplina
+activate System
+System --> Actor : Mostra a lista de disciplinas que leciona
+deactivate System
+
+Actor -> System : Seleciona a disciplina
+activate System
+System --> Actor : Mostra a lista de todos os exames da disciplina
+deactivate System
+
+deactivate Actor
+
+@enduml

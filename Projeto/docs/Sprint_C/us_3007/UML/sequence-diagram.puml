@@ -1,0 +1,125 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 3007
+autonumber
+
+actor Utilizador as Actor
+participant ChangePostItUI as UI <<presentation>>
+control ChangePostItController as Controller <<application>>
+participant CsvSharedBoardProtocolProxy as Proxy <<csvprotocol>>
+participant "theBoard:Board" as BoardDomain <<domain>>
+participant "thePostIt:PostIt" as PostItDomain <<domain>>
+database BoardRepository as BoardRepository <<repository>>
+database PostItRepository as PostItRepository <<repository>>
+
+activate Actor
+    Actor -> UI : Pede para mudar um post-it num quadro (board)
+    activate UI
+        UI -> Controller : create
+        UI -> Controller : listAllBoardsWithPermissionWrite()
+
+        activate Controller
+            Controller -> Proxy : getAllBoardsWithPermissionWrite()
+        deactivate Controller
+        activate Proxy
+            Proxy -> BoardRepository : findAllBoardsWithPermissionWrite(user)
+        deactivate Proxy
+
+    UI --> UI : Mostra a lista de quadros ativos em que o utilizador é dono ou tem permissões de escrita
+
+    UI --> Actor : Pede para escolher o quadro a mudar o post-it
+
+    Actor -> UI : Escolhe o quadro a modificar o post-it
+
+        UI -> Controller : listAllExistingPostIts(theBoard)
+        activate Controller
+            Controller -> Proxy : getAllExistingPostIts(title)
+        deactivate Controller
+        activate Proxy
+            Proxy -> PostItRepository : findAllExistingPostIts(title)
+        deactivate Proxy
+
+    UI --> UI : Mostra a lista de post-its do quadro selecionado
+
+    UI --> Actor : Pede para escolher o post-it a modificar
+
+    Actor -> UI : Escolhe o post-it a modificar
+
+    UI --> Actor : Pede para escolher entre mudar o conteúdo ou a posição do post-it
+
+    Actor -> UI : Escolhe a opção pretendida
+
+    alt Opção: Mudar conteúdo do post-it
+
+    UI --> Actor : Pede para inserir o novo conteúdo do post-it
+
+    Actor -> UI : Insere o novo conteúdo do post-it
+
+    else Opção: Mudar posição do post-it
+
+        UI -> Controller : listAllBoardElementLines(theBoard)
+        activate Controller
+            Controller -> BoardDomain : boardElementLine()
+        deactivate Controller
+
+    UI --> UI : Mostra a lista de linhas do quadro
+
+    UI --> Actor : Pede para escolher a nova linha da posição do post-it
+
+    Actor -> UI : Escolhe a nova linha da posição do post-it
+
+        UI -> Controller : listAllBoardElementColumns(theBoard)
+        activate Controller
+            Controller -> BoardDomain : boardElementColumn()
+        deactivate Controller
+
+    UI --> UI : Mostra a lista de colunas do quadro
+
+    UI --> Actor : Pede para escolher a nova coluna da posição do post-it
+
+    Actor -> UI : Escolhe a nova coluna da posição do post-it
+
+    end
+
+    UI --> UI : Mostra a informação do post-it modificado
+
+    UI --> Actor : Pede confirmação da operação
+
+    Actor -> UI : Confirma a operação
+
+    alt Opção: Mudar conteúdo do post-it
+
+        UI -> Controller : changeContentPostIt(theBoard, thePostIt, content)
+        activate Controller
+            Controller -> BoardDomain : changePostIt(thePostIt, content)
+            Controller -> Proxy : saveBoard(theBoard)
+
+            activate Proxy
+                Proxy -> BoardRepository : save(theBoard)
+            deactivate Proxy
+            Controller --> UI : theBoard
+        deactivate Controller
+
+    else Opção: Mudar posição do post-it
+
+        UI -> Controller : changePositionPostIt(theBoard, thePostIt, line, column)
+        activate Controller
+            Controller -> BoardDomain : changePostIt(thePostIt, line, column)
+            Controller -> Proxy : saveBoard(theBoard)
+
+            activate Proxy
+                Proxy -> BoardRepository : save(theBoard)
+            deactivate Proxy
+            Controller --> UI : theBoard
+        deactivate Controller
+
+    end
+
+    UI --> Actor : Informa o sucesso da operação
+    deactivate UI
+deactivate Actor
+
+@enduml

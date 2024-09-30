@@ -1,0 +1,76 @@
+@startuml
+
+title Class Diagram (CD) - US 1001_1
+
+class AddUserUI <<presentation>> {
+    doShow()
+}
+
+interface RepositoryFactory <<factory>> {}
+class PersistenceContext <<persistence>> {}
+class JpaAutoTxUserRepository <<persistence>> {}
+class InMemoryUserRepository <<persistence>> {}
+class JpaAutoTxTeacherRepository <<persistence>> {}
+class InMemoryTeacherRepository <<persistence>> {}
+class JpaAutoTxStudentRepository <<persistence>> {}
+class InMemoryStudentRepository <<persistence>> {}
+
+class SystemUser <<Domain>> {}
+class Student <<Domain>> {}
+class Teacher <<Domain>> {}
+
+class AddUserController <<Application>> {
+    +Role[] getRoleTypes()
+    +SystemUser addUser(...)
+    -Person addPerson(...)
+    +Teacher addTeacher(...)
+    -Teacher addPerson(...)
+    +Student addStudent(...)
+    -Student addPerson(...)
+}
+
+class UserManagementService <<Application>> {}
+class TeacherManagementService <<Application>> {}
+class StudentManagementService <<Application>> {}
+
+interface UserRepository <<Repositories>> {
+    +SystemUser save(SystemUser user)
+}
+interface TeacherRepository <<Repositories>> {
+    +Teacher save(Teacher user)
+}
+interface StudentRepository <<Repositories>> {
+    +Student save(Student user)
+}
+
+'Navigation
+AddUserUI --> AddUserController : theController
+AddUserController --> UserRepository : repo
+AddUserController --> UserManagementService : service
+AddUserController --> TeacherManagementService : service
+AddUserController --> StudentManagementService : service
+AddUserController --> SystemUser : user
+AddUserController --> Student : student
+AddUserController --> Teacher : teacher
+JpaAutoTxUserRepository -> UserRepository
+InMemoryUserRepository -> UserRepository
+JpaAutoTxTeacherRepository -> TeacherRepository
+InMemoryTeacherRepository -> TeacherRepository
+JpaAutoTxStudentRepository -> StudentRepository
+InMemoryStudentRepository -> StudentRepository
+
+'Dependencies
+AddUserController -[dashed]-> RepositoryFactory
+AddUserController -[dashed]-> PersistenceContext
+RepositoryFactory -[dashed]-> UserRepository
+RepositoryFactory -[dashed]-> TeacherRepository
+RepositoryFactory -[dashed]-> StudentRepository
+RepositoryFactory -[dashed]-> PersistenceContext
+UserRepository -[dashed]-> PersistenceContext
+TeacherRepository -[dashed]-> PersistenceContext
+StudentRepository -[dashed]-> PersistenceContext
+UserManagementService -[dashed]-> UserRepository
+TeacherManagementService -[dashed]-> TeacherRepository
+StudentManagementService -[dashed]-> StudentRepository
+
+@enduml

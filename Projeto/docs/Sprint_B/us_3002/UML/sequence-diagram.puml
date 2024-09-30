@@ -1,0 +1,85 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 3002
+autonumber
+
+actor "User" as user
+participant CreateBoardUI as ui <<presentation>>
+control CreateBoardController as controller <<application>>
+participant BoardBuilder as builder <<builder>>
+participant "board:Board" as board <<domain>>
+participant AppSettings as settings <<infrastructure>>
+database BoardRepository as bRepository <<repository>>
+
+activate user
+    user -> ui : Pede para criar um quadro (board)
+    activate ui
+        ui -> controller : create
+
+        ui --> user : Pede para inserir o título único para o quadro
+
+        user -> ui : Insere o título único para o quadro
+        ui --> user : Pede para inserir o número de colunas que o quadro deve ter
+
+        user -> ui : Insere o número de colunas para o quadro
+        ui -> controller : validColumnsForABoard(numColumns)
+        activate controller
+            controller -> settings : maximumNumberOfColumnsInABoard()
+            controller --> ui : valid
+        deactivate controller
+        ui -> ui: Verifica o valor inserido com \n o valor máximo definido
+
+        loop Para cada coluna do quadro (y)
+            ui --> user : Pede para inserir o título para a coluna y
+            user -> ui : Insere o título para a coluna y
+        end
+
+        ui --> user : Pede para inserir o número de linhas que o quadro deve ter
+
+        user -> ui : Insere o número de linhas para o quadro
+        ui -> controller : validLinesForABoard(numLines)
+        activate controller
+            controller -> settings : maximumNumberOfLinesInABoard()
+            controller --> ui : valid
+        deactivate controller
+        ui -> ui: Verifica o valor inserido com \n o valor máximo definido
+
+        loop Para cada linha do quadro (x)
+            ui --> user : Pede para inserir o título para a linha x
+            user -> ui : Insere o título para a linha x
+        end
+
+        ui -> ui : Mostra a informação do quadro a criar
+        ui --> user : Pede confirmação da operação
+
+        user -> ui : Confirma a operação
+
+        ui -> controller : addBoard(title, numLines, numColumns, linesData, columnsData)
+        activate controller
+            controller -> builder : create
+            controller -> builder : entitled(title)
+            controller -> builder : dimensions(boardDimensions)
+            controller -> builder : creationDateTime(boardCreationDateTime)
+            controller -> builder : withBoardElementsLines(linesData)
+            controller -> builder : withBoardElementsColumns(columnsData)
+
+            controller -> builder : build()
+            activate builder
+                builder -> board : create(title, boardCreationDateTime, boardDimensions)
+                board --> builder : board
+                builder --> controller : board
+            deactivate builder
+
+            controller -> bRepository : save(board)
+
+            controller --> ui : board
+        deactivate controller
+
+        ui --> user : Informa o sucesso da operação
+    deactivate ui
+deactivate user
+
+@enduml

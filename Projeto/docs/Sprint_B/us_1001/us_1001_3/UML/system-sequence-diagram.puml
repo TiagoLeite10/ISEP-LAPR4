@@ -1,0 +1,21 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 1001_3
+autonumber
+
+actor "Gerente" as Actor
+participant ":Sistema" as System
+
+activate Actor
+Actor -> System : Pede para listar os utilizadores do sistema
+activate System
+
+System --> Actor : Mostra a lista de utilizadores do sistema
+deactivate System
+
+deactivate Actor
+
+@enduml

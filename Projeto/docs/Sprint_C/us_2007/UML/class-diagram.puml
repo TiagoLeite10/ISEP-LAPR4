@@ -1,0 +1,64 @@
+@startuml
+
+title Class Diagram (CD) - US 2007
+
+'Classes
+class AddExamQuestionUI <<presentation>> {
+    #boolean doShow()
+}
+
+class JpaCourseRepository <<persistence>> {}
+class InMemoryCourseRepository <<persistence>> {}
+
+class Teacher <<domain>> {
+}
+
+class Course <<domain>> {
+    -Set<Question> questions
+    +void addListQuestions(questions : Iterable<Question>)
+}
+class Question <<domain>> {
+}
+
+class AddExamQuestionController <<application>> {
+    +Iterable<Course> listAllTeacherCoursesInProgress()
+    +Iterable<Question> parseQuestions(pathToFile : String)
+    +Course addQuestions(theCourse : Course, questions : Iterable<Question>)
+}
+
+interface CourseRepository <<repositories>> {
+    +Iterable<Course> findAllTeacherCoursesInProgress(theTeacher : Teacher)
+    +Course save(theCourse : Course)
+}
+
+class ExamQuestionMain <<lprog>> {
+    +{static}Iterable<Question> parseWithVisitor(pathToFile : String)
+}
+class ExamQuestionLexer <<lprog>> {}
+class CommonTokenStream <<lprog>> {}
+class ExamQuestionParser <<lprog>> {}
+class ParseTree <<lprog>> {}
+class EvalVisitor <<lprog>> {
+    +Iterable<Question> questions()
+}
+
+'Navigation
+AddExamQuestionUI --> AddExamQuestionController : theController
+AddExamQuestionController --> CourseRepository : courseRepo
+AddExamQuestionController --> Teacher : theTeacher
+AddExamQuestionController --> Course : theCourse
+AddExamQuestionController --> Question : question
+AddExamQuestionController --> ExamQuestionMain
+JpaCourseRepository -> CourseRepository
+InMemoryCourseRepository -> CourseRepository
+
+'Dependencies
+AddExamQuestionUI -[dashed]-> Question
+ExamQuestionMain -[dashed]-> Question
+ExamQuestionMain -[dashed]-> ExamQuestionLexer
+ExamQuestionMain -[dashed]-> CommonTokenStream
+ExamQuestionMain -[dashed]-> ExamQuestionParser
+ExamQuestionMain -[dashed]-> ParseTree
+ExamQuestionMain -[dashed]-> EvalVisitor
+
+@enduml

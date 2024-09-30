@@ -1,0 +1,16 @@
+@startuml
+'https://plantuml.com/state-diagram
+
+[*] -> exist : object created
+
+state exist {
+}
+
+exist -> removed : Post-it removed from board
+
+state removed {
+}
+
+removed -> [*]
+
+@enduml

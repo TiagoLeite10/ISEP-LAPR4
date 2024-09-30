@@ -1,0 +1,56 @@
+@startuml
+
+title Class Diagram (CD) - US 2001
+
+'Classes
+class AddExamUI <<presentation>> {
+    doShow()
+}
+
+class Course <<domain>> {
+}
+
+class Exam <<domain>> {
+}
+
+class AddExamController <<application>> {
+    +Iterable<Course> listAllTeacherCourses()
+    +Exam getExam(String filePath)
+    +Course addExam(Course course, Exam exam)
+}
+
+interface CourseRepository <<repositories>> {
+    +Course save(Course course)
+}
+
+class ExamMain <<lprog>> {
+    +Exam parseWithVisitor(String filePath)
+}
+
+class ExamLexer <<lprog>> {}
+class CommonTokenStream <<lprog>> {}
+class ExamParser <<lprog>> {}
+class ParseTree <<lprog>> {}
+class EvalVisitor <<lprog>> {
+    +Exam getExam()
+}
+
+'Navigation
+AddExamUI --> AddExamController : theController
+AddExamController --> Course : course
+AddExamController --> Exam : exam
+AddExamController --> ExamMain
+AddExamController ---> CourseRepository : repo
+
+'Dependencies
+AddExamUI -[dashed]-> Course
+ExamMain -[dashed]-> Course
+AddExamUI -[dashed]-> Exam
+ExamMain -[dashed]-> Exam
+ExamMain -[dashed]--> ExamLexer
+ExamMain -[dashed]--> CommonTokenStream
+ExamMain -[dashed]--> ExamParser
+ExamMain -[dashed]--> ParseTree
+ExamMain -[dashed]--> EvalVisitor
+
+@enduml

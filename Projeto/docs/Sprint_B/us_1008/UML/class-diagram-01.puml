@@ -1,0 +1,35 @@
+@startuml
+title Class Diagram (SSD) - US 1008
+
+
+'Classes
+class CreateEnrollmentUI <<presentation>> {
+    doShow()
+}
+
+class JpaCourseRepository <<persistence>> {}
+class InMemoryCourseRepository <<persistence>> {}
+
+class Course <<domain>> {}
+class Enrollement <<domain>> {}
+
+class CreateEnrollmentController <<application>> {}
+class ListCourseService <<application>>{}
+
+interface CourseRepository <<repositories>> {}
+
+'Navigation
+CreateEnrollmentUI --> CreateEnrollmentController : theController
+CreateEnrollmentController --> CourseRepository : repo
+CreateEnrollmentController --> ListCourseService : service
+CreateEnrollmentController --> Course : course
+CreateEnrollmentController --> Enrollement : enrollement
+JpaCourseRepository -> CourseRepository
+InMemoryCourseRepository -> CourseRepository
+
+'Dependencies
+CreateEnrollmentUI -[dashed]-> Course
+CreateEnrollmentUI -[dashed]-> Enrollement
+ListCourseService -[dashed]-> CourseRepository
+
+@enduml

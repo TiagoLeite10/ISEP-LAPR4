@@ -1,0 +1,34 @@
+@startuml
+'https://plantuml.com/state-diagram
+
+[*] -> created : meeting create
+
+state created {
+}
+
+created --> canceled : User has overlapped schedule
+
+state canceled {
+}
+
+canceled --> [*]
+
+state invited {
+}
+
+created -> invited : User has no overlapping schedule
+
+state refused {
+}
+
+invited --> refused : User declines the invitation
+
+state accepted {
+}
+
+invited --> accepted : User accepts the invitation
+
+refused --> [*]
+accepted --> [*]
+
+@enduml

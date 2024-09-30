@@ -1,0 +1,36 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam handwritten true
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 4001
+autonumber
+
+actor "User" as Actor
+participant ":Sistema" as System
+
+activate Actor
+
+Actor -> System : Pede para marcar uma reunião
+
+activate System
+    System --> Actor : Pede a informação sobre a reunião
+deactivate System
+
+Actor -> System : Data, hora, duração
+
+activate System
+    System --> Actor : Reunião criada com sucesso
+    System --> Actor : Lista os utilizadores existentes
+deactivate System
+
+Actor -> System : Selecionar os utilizadores para serem convidados para a reunião
+
+activate System
+    System --> Actor : Informação de sucesso da operação
+deactivate System
+
+deactivate Actor
+
+@enduml

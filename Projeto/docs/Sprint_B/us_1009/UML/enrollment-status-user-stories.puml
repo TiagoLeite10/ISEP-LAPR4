@@ -1,0 +1,12 @@
+@startuml
+'https://plantuml.com/state-diagram
+
+[*] --> Pending : US 1008 - As Student, I want to request my enrollment in a course.
+
+Pending -left-> Approved : US 1009 - As Manager, I want to approve or reject students applications to courses
+Pending -right-> Reject : US 1009 - As Manager, I want to approve or reject students applications to courses
+
+Reject --> [*]
+Approved --> [*]
+
+@enduml

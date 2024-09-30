@@ -1,0 +1,50 @@
+@startuml
+
+top to bottom direction
+
+skinparam titleFontSize 25
+
+
+'Enrollment
+package "<<aggregate>> Enrollment" {
+    entity Enrollment <<entity>> <<root>>
+    class EnrollmentStatus <<(V, #FF8B40) value object>>
+}
+
+'Student
+package "<<aggregate>> Student" {
+    entity Student <<entity>> <<root>>
+}
+
+
+'Course
+package "<<aggregate>> Course" {
+    entity Course <<entity>> <<root>>
+    class CourseTitle <<(V, #FF8B40) value object>>
+    class CourseCode <<(V, #FF8B40) value object>>
+    class CourseDescription <<(V, #FF8B40) value object>>
+    class CourseStatus <<(V, #FF8B40) value object>>
+
+    class CourseEnrolmentLimits <<(V, #FF8B40) value object>> {
+        minimumEnrolments
+        maximumEnrolments
+    }
+    class CourseDate <<(V, #FF8B40) value object>> {
+        dateStart
+        dateEnd
+    }
+}
+
+Course -down-> CourseTitle
+Course -down-> CourseCode
+Course -down-> CourseDescription
+Course -down-> CourseStatus
+Course -down-> CourseEnrolmentLimits
+Course -down-> CourseDate
+Course "1" --> "0..*" Enrollment : has >
+
+Enrollment -down-> EnrollmentStatus
+Enrollment "1..*" --> "1" Student : has >
+
+
+@enduml

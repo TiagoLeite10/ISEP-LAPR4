@@ -1,0 +1,71 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 2008
+autonumber
+
+actor "Professor" as Teacher
+participant CreateAutomaticFormativeExamsUI as ui <<presentation>>
+control CreateAutomaticFormativeExamsController as controller <<application>>
+
+participant "theTeacher:Teacher" as theTeacher <<domain>>
+participant "theCourse:Course" as theCourse <<domain>>
+
+participant ":FormativeExamMain" as formativeExamMain <<lprog>>
+participant "theFormativeExam:FormativeExam" as formativeExam <<domain>>
+
+participant FormativeExamService as formativeExamService <<application>>
+database QuestionRepository as questionRepository <<repository>>
+database CourseRepository as courseRepository <<repository>>
+
+activate Teacher
+
+    Teacher -> ui : Pede para criar/atualizar um exame formativo automático
+    activate ui
+        ui -> controller : create
+        controller -> formativeExamService : create
+
+        ui -> controller : availableCourses = findAllTeacherCoursesInProgress()
+        activate controller
+            controller -> courseRepository : findAllTeacherCoursesInProgress(theTeacher)
+        deactivate controller
+
+        ui --> ui : Mostra a lista de disciplinas disponíveis (no estado in_progress) e que são lecionadas pelo próprio professor
+
+        ui --> Teacher : Pede para escolher uma disciplina
+
+        Teacher -> ui : Escolhe uma disciplina
+        ui --> Teacher : Pede para inserir o caminho até ao ficheiro com a informação do exame formativo a criar
+
+        Teacher -> ui : Insere o caminho até ao ficheiro
+
+        ui -> controller : theFormativeExam = parseFormativeExam(theCourse, pathToFile)
+        activate controller
+            controller -> formativeExamMain : parseWithVisitor(pathToFile)
+            controller -> formativeExamService : checkFormativeExamNumberOfTypeQuestions(theCourse, theFormativeExam)
+            activate formativeExamService
+                loop Para cada tipo de questão
+                    formativeExamService -> questionRepository : countTypeQuestion(theCourse, typeQuestion)
+                end loop
+            deactivate formativeExamService
+        deactivate controller
+
+        ui --> Teacher : Mostra o conteúdo a ser guardado e pede confirmação
+
+        Teacher -> ui : Confirma a operação
+
+        ui -> controller : createFormativeExam(theCourse, theFormativeExam)
+        activate controller
+            controller -> theCourse : addFormativeExam(theFormativeExam)
+            controller -> courseRepository : save(theCourse)
+            controller --> ui : theCourse
+        deactivate controller
+
+        ui --> Teacher : Informa o sucesso da operação
+    deactivate ui
+
+deactivate Teacher
+
+@enduml

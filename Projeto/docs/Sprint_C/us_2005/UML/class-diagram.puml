@@ -1,0 +1,43 @@
+@startuml
+
+title Class Diagram (CD) - US 1009
+
+'Classes
+class ListGradesUI <<presentation>> {
+    doShow()
+}
+
+class JpaTakenExamRepository <<persistence>> {}
+class InMemoryTakenExamRepository <<persistence>> {}
+
+class TakenExame <<domain>> {
+}
+
+
+class ListGradesController <<application>> {
+    +Iterable<GradePerStudent> listAllGrades()
+}
+
+
+
+class GradePerStudent <<dto>>{
+}
+
+interface TakenExamRepository <<repositories>> {
+    +Iterable<GradePerStudent> findAllGrades(Student student)
+}
+
+'Navigation
+ListGradesUI --> ListGradesController : theController
+ListGradesController --> TakenExamRepository : repo
+ListGradesController --> TakenExame : takenExam
+
+TakenExame -[dashed]-> GradePerStudent
+
+JpaTakenExamRepository -> TakenExamRepository
+InMemoryTakenExamRepository -> TakenExamRepository
+
+'Dependencies
+ListGradesUI -[dashed]-> TakenExame
+
+@enduml

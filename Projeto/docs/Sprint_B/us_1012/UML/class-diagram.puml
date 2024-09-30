@@ -1,0 +1,49 @@
+@startuml
+
+title Class Diagram (SSD) - US 1012
+
+'Classes
+class UpdateClassScheduleUI <<presentation>> {
+    doShow()
+}
+
+class JpaRecurringClassRepository <<persistence>> {}
+class JpaCourseRepository <<persistence>> {}
+class InMemoryRecurringClassRepository <<persistence>> {}
+class InMemoryCourseRepository <<persistence>> {}
+
+
+class ClassInstance <<domain>> {}
+class Course <<domain>> {}
+class RecurringClass <<domain>> {}
+
+class UpdateClassScheduleController <<application>> {}
+class ListRecurringClassService <<application>>{}
+class ListCourseService <<application>>{}
+
+interface RecurringClassRepository <<repositories>> {}
+interface CourseRepository <<repositories>> {}
+
+'Navigation
+UpdateClassScheduleUI --> UpdateClassScheduleController : theController
+UpdateClassScheduleController --> RecurringClassRepository : repo
+UpdateClassScheduleController --> CourseRepository : repo
+UpdateClassScheduleController --> ListRecurringClassService : service
+UpdateClassScheduleController --> ListCourseService : service
+
+UpdateClassScheduleController --> ClassInstance : classInstance
+UpdateClassScheduleController --> RecurringClass : recurringClass
+UpdateClassScheduleController --> Course : course
+JpaRecurringClassRepository -> RecurringClassRepository
+JpaCourseRepository -> CourseRepository
+InMemoryRecurringClassRepository -> RecurringClassRepository
+InMemoryCourseRepository -> CourseRepository
+
+'Dependencies
+UpdateClassScheduleUI -[dashed]-> ClassInstance
+UpdateClassScheduleUI -[dashed]-> Course
+UpdateClassScheduleUI -[dashed]-> RecurringClass
+ListRecurringClassService -[dashed]-> RecurringClassRepository
+ListCourseService -[dashed]-> CourseRepository
+
+@enduml

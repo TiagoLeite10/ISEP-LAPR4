@@ -1,0 +1,38 @@
+@startuml
+
+title Class Diagram (SSD) - US 1007
+
+'Classes
+class BulkEnrollmentUI <<presentation>> {
+    doShow()
+}
+
+class JpaCourseRepository <<persistence>> {}
+class InMemoryCourseRepository <<persistence>> {}
+
+class Course <<domain>> {}
+class Enrollement <<domain>> {}
+class BulkEnrollmentFileCSV <<domain>> {}
+
+class BulkEnrollmentController <<application>> {}
+class ListCourseService <<application>>{}
+
+interface CourseRepository <<repositories>> {}
+
+'Navigation
+BulkEnrollmentUI --> BulkEnrollmentController : theController
+BulkEnrollmentController --> CourseRepository : repo
+BulkEnrollmentController --> ListCourseService : service
+BulkEnrollmentController --> Course : course
+BulkEnrollmentController --> Enrollement : enrollement
+BulkEnrollmentController --> BulkEnrollmentFileCSV : bulk
+JpaCourseRepository -> CourseRepository
+InMemoryCourseRepository -> CourseRepository
+
+'Dependencies
+BulkEnrollmentUI -[dashed]-> Course
+BulkEnrollmentUI -[dashed]-> Enrollement
+BulkEnrollmentUI -[dashed]-> BulkEnrollmentFileCSV
+ListCourseService -[dashed]-> CourseRepository
+
+@enduml

@@ -1,0 +1,48 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title SD_Add_User
+
+participant AddUserController as Controller <<application>>
+participant UserManagementService as Service <<service>>
+participant SystemUserBuilder as Builder <<builder>>
+participant "user:SystemUser" as UserDomain <<domain>>
+participant PersistenceContext as Persistence <<persistence>>
+participant RepositoryFactory as Factory <<factory>>
+database UserRepository as Repository <<repository>>
+
+[o-> Controller :  addUser(username, \npassword, firstName,\nlastName, email, \nroles)
+activate Controller
+    Controller -> Service: create
+    Controller -> Service: registerNewUser(username, password, \nfirstName, lastName, email, \nroles, createdOn)
+    activate Service
+
+    Service -> Builder: create
+    Service -> Builder: createUser()
+    activate Builder
+    Builder -> UserDomain: create (username,\npassword, firstName,\nlastName,email, roles)
+    UserDomain->Builder: user
+    Builder -> Service:user
+    deactivate Builder
+
+    Service -> Persistence: repositories()
+    activate Persistence
+        Persistence -> Factory: create
+        Persistence -> Service: factory
+    deactivate Persistence
+
+    Service -> Factory: users()
+    activate Factory
+        Factory -> Repository: create
+        Factory -> Service: userRepository
+    deactivate Factory
+
+    Service->Repository:save(user)
+    Service -> Controller : user
+    deactivate Service
+    [<-- Controller : user
+deactivate Controller
+
+@enduml

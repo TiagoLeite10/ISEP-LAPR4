@@ -1,0 +1,45 @@
+@startuml
+title Sequence Diagram (SD) da us_1006_1
+
+autonumber
+
+actor "Gerente" as USER
+participant "<<presentation>> \n ListCourseUI" as UI
+control "<<application>> \n ListCourseController" as CTRL
+participant "<<application>> \n ListCourseService" as SERV
+database "<<repository>> \n CourseRepository" as REPO
+participant "<<domain>> \n course: Course" as CRS
+
+activate USER
+
+    USER -> UI : pedido para listar todos os cursos disponiveis para mim
+    activate UI
+
+    UI -> CTRL : create
+
+    CTRL -> SERV : create
+
+    UI -> CTRL : listManagerCourses()
+    activate CTRL
+
+    CTRL -> SERV : allCourses()
+    activate SERV
+
+    SERV -> REPO : list = findAll()
+    activate REPO
+
+    REPO --> SERV : list
+    deactivate REPO
+
+    SERV --> CTRL : list
+    deactivate SERV
+
+    CTRL --> UI : list
+    deactivate CTRL
+
+    UI --> USER : lista todos os cursos
+    deactivate UI
+
+deactivate USER
+
+@enduml

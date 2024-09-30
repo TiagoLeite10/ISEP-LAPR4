@@ -1,0 +1,51 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 3002
+autonumber
+
+actor "User" as user
+participant ":Sistema" as Sistema
+
+activate user
+
+    user -> Sistema : Pede para criar um quadro (board)
+    activate Sistema
+        Sistema --> user : Pede para inserir o título único para o quadro
+    deactivate Sistema
+
+    user -> Sistema : Insere o título único para o quadro
+    activate Sistema
+        Sistema --> user : Pede para inserir o número de colunas que o quadro deve ter
+    deactivate Sistema
+
+    user -> Sistema : Insere o número de colunas para o quadro
+    activate Sistema
+        Sistema --> user : Pede para inserir o título de cada coluna do quadro
+    deactivate Sistema
+
+    user -> Sistema : Insere o título de cada coluna do quadro
+    activate Sistema
+        Sistema --> user : Pede para inserir o número de linhas que o quadro deve ter
+    deactivate Sistema
+
+    user -> Sistema : Insere o número de linhas para o quadro
+    activate Sistema
+        Sistema --> user : Pede para inserir o título para cada linha do quadro
+    deactivate Sistema
+
+    user -> Sistema : Insere o título para cada linha do quadro
+    activate Sistema
+        Sistema --> user : Mostra a informação do quadro a criar e pede confirmação
+    deactivate Sistema
+
+    user -> Sistema : Confirma a operação
+    activate Sistema
+        Sistema --> user : Informa o sucesso da operação
+    deactivate Sistema
+
+deactivate user
+
+@enduml

@@ -1,0 +1,49 @@
+@startuml
+
+title Class Diagram (CD) - US 3010
+
+'Classes
+class ArchiveBoardUI <<presentation>> {
+    doShow()
+}
+
+class JpaBoardRepository <<persistence>> {}
+class InMemoryBoardRepository <<persistence>> {}
+
+class Board <<domain>> {
+-archived : boolean
+    +void archivedBoard()
+}
+class SystemUser <<domain>> {}
+class Username <<(V, #FF8B40) value object>>
+
+class ArchiveBoardController <<application>> {
+    +Iterable<Board> listAllBoardsOwned();
+    +Board archiveBoard(theBoard : Board)
+}
+
+interface BoardRepository <<repositories>> {
+    +Iterable<Board> findAllBoardsOwned(user : Username);
+    +Board save(theBoard : Board)
+}
+
+class CsvSharedBoardProtocolProxy <<csvprotocol>> {
+    +Iterable<Board> getAllBoardsOwned()
+    +Board saveBoard(theBoard : Board)
+}
+
+'Navigation
+ArchiveBoardUI --> ArchiveBoardController : theController
+ArchiveBoardController --> CsvSharedBoardProtocolProxy : proxy
+ArchiveBoardController --> SystemUser : user
+ArchiveBoardController --> Board : theBoard
+CsvSharedBoardProtocolProxy --> BoardRepository : boardRepo
+SystemUser --> Username
+JpaBoardRepository -> BoardRepository
+InMemoryBoardRepository -> BoardRepository
+
+'Dependencies
+ArchiveBoardUI -[dashed]-> SystemUser
+ArchiveBoardUI -[dashed]-> Board
+
+@enduml

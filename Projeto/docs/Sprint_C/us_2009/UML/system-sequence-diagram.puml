@@ -1,0 +1,45 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 2009
+autonumber
+
+actor "Student" as Student
+participant ":Sistema" as Sistema
+
+activate Student
+
+    Student -> Sistema : Pede para responder a um exame formativo automático
+    activate Sistema
+        Sistema --> Student : Mostra a lista de disciplinas em que o estudante está inscrito
+        Sistema --> Student : Pede para escolher a disciplina da qual pretende fazer um exame formativo
+    deactivate Sistema
+
+    Student -> Sistema : Escolhe a disciplina
+    activate Sistema
+        Sistema --> Student : Lista todos os exames formativos automáticos disponíveis da disciplina selecionada
+        Sistema --> Student : Pede para selecionar o exame formativo que pretende realizar
+    deactivate Sistema
+
+    Student -> Sistema : Escolhe o exame formativo que pretende realizar
+    activate Sistema
+        Sistema --> Student : Apresenta o exame formativo
+        Sistema --> Student : Pede ao utilizador para inserir o caminho até ao ficheiro com a resolução do exame formativo
+    deactivate Sistema
+
+    Student -> Sistema : Insere o caminho do ficheiro com a resolução do exame formativo
+    activate Sistema
+        Sistema --> Student : Imprime as respostas do estudante que serão dadas ao exame formativo
+        Sistema --> Student : Pede confirmação para a finalização do exame formativo
+    deactivate Sistema
+
+    Student -> Sistema : Confirma operação
+    activate Sistema
+        Sistema --> Student : Informa o sucesso da operação
+    deactivate Sistema
+
+deactivate Student
+
+@enduml

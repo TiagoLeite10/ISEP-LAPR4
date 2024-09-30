@@ -1,0 +1,36 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 1012
+autonumber
+
+actor "Professor" as Actor
+participant ":Sistema" as System
+
+activate Actor
+
+Actor -> System : Pede para atualizar a data e hora de uma aula
+activate System
+System --> Actor : Mostra a lista de disciplinas que \n leciona que não se encontram fechadas
+deactivate System
+
+Actor -> System : Seleciona o curso
+activate System
+System --> Actor : Mostra a lista das aulas que leciona
+deactivate System
+
+Actor -> System : Seleciona a aula que pretende
+activate System
+System --> Actor : Pede o dia e a hora da nova aula agendada
+deactivate System
+
+Actor -> System : Escreve a nova data e hora da aula
+activate System
+System --> Actor : Informa o sucesso da operação
+deactivate System
+
+deactivate Actor
+
+@enduml

@@ -1,0 +1,51 @@
+@startuml
+
+'Classes
+class SetCourseTeacherUI <<presentation>> {
+    doShow()
+}
+
+class Course <<Domain>> {
+    +void addTeacherToCourse(Teacher theTeacher)
+}
+
+class Teacher <<Domain>> {
+}
+
+class SetCourseTeacherController <<Application>> {
+    +Iterable<Course> allCoursesNotClosed()
+    +Iterable<Teacher> allTeachersWhoDoNotTeachThisCourse(Course theCourse)
+    +Course setCourseTeacher(Course theCourse, Teacher theTeacher)
+}
+
+class ListCourseService <<Application>> {
+    +Iterable<Course> allCoursesNotClosed()
+}
+
+class ListTeacherService <<Application>> {
+    +Iterable<Teacher> allTeachersWhoDoNotTeachThisCourse(Course theCourse)
+}
+
+class CourseRepository <<Repositories>> {
+    +Course save(Course theCourse)
+}
+
+class TeacherRepository <<Repositories>> {}
+
+'Dependencies
+SetCourseTeacherUI -[dashed]-> Course
+ListCourseService -[dashed]-> CourseRepository
+SetCourseTeacherUI -[dashed]-> Teacher
+ListTeacherService -[dashed]-> TeacherRepository
+
+
+'Navigation
+SetCourseTeacherUI --> SetCourseTeacherController : theController
+SetCourseTeacherController --> CourseRepository : repo
+SetCourseTeacherController --> TeacherRepository : repo
+SetCourseTeacherController --> ListCourseService : service
+SetCourseTeacherController --> ListTeacherService : service
+SetCourseTeacherController --> Course : theCourse
+SetCourseTeacherController --> Teacher : theTeacher
+
+@enduml

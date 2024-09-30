@@ -1,0 +1,100 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 3006
+autonumber
+
+actor Utilizador as Actor
+participant CreatePostItUI as UI <<presentation>>
+control CreatePostItController as Controller <<application>>
+participant CsvSharedBoardProtocolProxy as Proxy <<csvprotocol>>
+participant PostItBuilder as Builder <<domain>>
+participant "thePostIt:PostIt" as PostItDomain <<domain>>
+participant "theBoard:Board" as BoardDomain <<domain>>
+database BoardRepository as Repository <<repository>>
+
+activate Actor
+    Actor -> UI : Pede para criar um post-it num quadro (board)
+    activate UI
+        UI -> Controller : create
+        UI -> Controller : listAllBoardsWithPermissionWrite()
+
+        activate Controller
+            Controller -> Proxy : getAllBoardsWithPermissionWrite()
+        deactivate Controller
+        activate Proxy
+            Proxy -> Repository : findAllBoardsWithPermissionWrite(user)
+        deactivate Proxy
+
+    UI --> UI : Mostra a lista de quadros ativos em que o utilizador é dono ou tem permissões de escrita
+
+    UI --> Actor : Pede para escolher o quadro a criar o post-it
+
+    Actor -> UI : Escolhe o quadro a criar o post-it
+
+        deactivate Controller
+
+    UI --> Actor : Pede para inserir o conteúdo e tipo do post-it
+
+    Actor -> UI : Insere o conteúdo e tipo do post-it
+
+        UI -> Controller : listAllBoardElementLines(theBoard)
+        activate Controller
+            Controller -> BoardDomain : boardElementLine()
+        deactivate Controller
+
+    UI --> UI : Mostra a lista de linhas do quadro
+
+    UI --> Actor : Pede para escolher a linha da posição inicial do post-it
+
+    Actor -> UI : Escolhe a linha da posição inicial do post-it
+
+        UI -> Controller : listAllBoardElementColumns(theBoard)
+        activate Controller
+            Controller -> BoardDomain : boardElementColumn()
+        deactivate Controller
+
+    UI --> UI : Mostra a lista de colunas do quadro
+
+    UI --> Actor : Pede para escolher a coluna da posição inicial do post-it
+
+    Actor -> UI : Escolhe a coluna da posição inicial do post-it
+
+    UI --> UI : Mostra a informação do post-it a criar
+
+    UI --> Actor : Pede confirmação da operação
+
+    Actor -> UI : Confirma a operação
+
+        UI -> Controller : addPostIt(theBoard, content, line, column, type)
+        activate Controller
+            Controller -> Builder : create
+            Controller -> Builder : withContent(content)
+            Controller -> Builder : withPosition(line, column)
+            Controller -> Builder : withType(type)
+            Controller -> Builder : withCreator(creator)
+            Controller -> Builder : build()
+
+            activate Builder
+                Builder -> PostItDomain : create(content, position, type)
+                PostItDomain --> Builder : thePostIt
+                Builder --> Controller : thePostIt
+            deactivate Builder
+
+            Controller -> BoardDomain : addPostIt(thePostIt)
+            Controller -> Proxy : saveBoard(theBoard)
+
+            activate Proxy
+                Proxy -> Repository : save(theBoard)
+            deactivate Proxy
+
+            Controller --> UI : theBoard
+        deactivate Controller
+
+    UI --> Actor : Informa o sucesso da operação
+    deactivate UI
+deactivate Actor
+
+@enduml

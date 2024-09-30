@@ -1,0 +1,52 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title SD_Add_Student
+
+participant AddUserController as Controller <<application>>
+participant StudentManagementService as Service <<service>>
+participant StudentBuilder as Builder <<builder>>
+participant "user:SystemUser" as UserDomain <<domain>>
+participant "person:Person" as PersonDomain <<domain>>
+participant "student:Student" as StudentDomain <<domain>>
+participant PersistenceContext as Persistence <<persistence>>
+participant RepositoryFactory as Factory <<factory>>
+database StudentRepository as Repository <<repository>>
+
+[o-> Controller :  addStudent(username, \npassword, firstName,\nlastName, email, \nroles, taxPayerNumber, \nbirthDate)
+activate Controller
+    Controller -> Service: create
+    Controller -> Service: registerNewStudent(username, \npassword, firstName,\nlastName, email, roles,\ncreatedOn, taxPayerNumber, \nbirthDate)
+    activate Service
+
+    Service -> Builder: create
+    Service -> Builder:createStudent()
+
+    activate Builder
+    Builder -> StudentDomain: create (person)
+    StudentDomain->Builder: student
+
+    Builder -> Service:student
+    deactivate Builder
+
+    Service -> Persistence: repositories()
+    activate Persistence
+        Persistence -> Factory: create
+        Persistence -> Service: factory
+    deactivate Persistence
+
+    Service -> Factory: students()
+    activate Factory
+        Factory -> Repository: create
+        Factory -> Service: studentRepository
+    deactivate Factory
+
+    Service->Repository:save(student)
+    Service -> Controller : student
+    deactivate Service
+    [<-- Controller : student
+deactivate Controller
+
+@enduml

@@ -1,0 +1,48 @@
+@startuml
+
+top to bottom direction
+
+skinparam titleFontSize 25
+title <u>Classes de Domínio para a US 1003</u>
+
+'Manager
+package "<<aggregate>> Manager" {
+    entity Manager <<entity>> <<root>>
+}
+
+'Course
+package "<<aggregate>> Course" {
+    entity Course <<entity>> <<root>>
+    class CourseTitle <<(V, #FF8B40) value object>>
+    class CourseCode <<(V, #FF8B40) value object>>
+    class CourseDescription <<(V, #FF8B40) value object>>
+    class CourseStatus <<(V, #FF8B40) value object>>
+    note bottom
+        Diagrama de estados
+        disponível com o nome
+        "course-status-user-stories"
+    end note
+    class CourseEnrolmentLimits <<(V, #FF8B40) value object>> {
+        minimumEnrolments
+        maximumEnrolments
+    }
+}
+
+'Enrollment
+package "<<aggregate>> Enrollment" {
+    entity Enrollment <<entity>> <<root>>
+    class EnrollmentStatus <<(V, #FF8B40) value object>>
+}
+
+
+Course -down-> CourseTitle
+Course -down-> CourseCode
+Course -down-> CourseDescription
+Course -down-> CourseStatus
+Course -down-> CourseEnrolmentLimits
+Course "0..*" --> "1..*" Manager : is managed by >
+Course "1" --> "0..*" Enrollment : has >
+
+Enrollment -down-> EnrollmentStatus
+
+@enduml

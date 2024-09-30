@@ -1,0 +1,31 @@
+@startuml
+'https://plantuml.com/state-diagram
+
+[*] -> close : US 1002 - As Manager, I want to create courses
+
+state close {
+}
+
+close -> open : US 1004 - As Manager, I want to open and close courses
+
+state open {
+}
+
+open --> enroll : US 1003 - As Manager, I want to open and close enrollements in courses
+
+state enroll {
+}
+
+enroll --> in_progress : US 1003 - As Manager, I want to open and close enrollements in courses
+
+state in_progress {
+}
+
+closed <- in_progress : US 1004 - As Manager, I want to open and close courses
+
+state closed {
+}
+
+[*] <- closed
+
+@enduml

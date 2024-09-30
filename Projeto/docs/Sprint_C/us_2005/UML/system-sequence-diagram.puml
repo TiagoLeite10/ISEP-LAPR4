@@ -1,0 +1,21 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 2005
+autonumber
+
+actor "Aluno" as Actor
+participant ":Sistema" as System
+
+activate Actor
+
+Actor -> System : Pede para listar as notas
+activate System
+System --> Actor : Mostra a lista das notas
+deactivate System
+
+deactivate Actor
+
+@enduml

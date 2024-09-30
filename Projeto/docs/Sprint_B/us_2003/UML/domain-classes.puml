@@ -1,0 +1,51 @@
+@startuml
+
+top to bottom direction
+
+'Teacher
+package "<<aggregate>> Teacher" {
+    entity Teacher <<entity>> <<root>>
+    class Acronym <<(V, #FF8B40) value object>>
+}
+
+'Course
+package "<<aggregate>> Course" {
+    entity Course <<entity>> <<root>>
+    class CourseTitle <<(V, #FF8B40) value object>>
+    class CourseCode <<(V, #FF8B40) value object>>
+    class CourseDescription <<(V, #FF8B40) value object>>
+    class CourseStatus <<(V, #FF8B40) value object>>
+    class EnrolmentLimits  <<(V, #FF8B40) value object>> {
+        minimumEnrolment
+        maximumEnrolment
+    }
+}
+
+'Exam
+package "<<aggregate>> Exam" {
+    entity Exam <<entity>> <<root>>
+    class ExamTitle <<(V, #FF8B40) value object>>
+    class ExamDescription <<(V, #FF8B40) value object>>
+    class ExamDateTime <<(V, #FF8B40) value object>> {
+        openingDateTime
+        closingDateTime
+    }
+}
+
+Teacher -down-> Acronym
+
+Course -down-> CourseTitle
+Course -down-> CourseCode
+Course -down-> CourseDescription
+Course -down-> CourseStatus
+Course -down-> EnrolmentLimits
+Course "1" --> "1..*" Exam : has >
+Course "1" --> "1" Teacher : has responsible >
+Course "1..*" --> "1..*" Teacher : is taught >
+
+Exam -down-> ExamTitle
+Exam -down-> ExamDateTime
+Exam -down-> ExamDescription
+Exam "0..*" --> "1" Teacher : created by >
+
+@enduml

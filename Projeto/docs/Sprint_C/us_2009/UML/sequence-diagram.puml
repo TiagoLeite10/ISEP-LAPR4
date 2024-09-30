@@ -1,0 +1,105 @@
+@startuml
+
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 2009
+autonumber
+
+actor "Student" as Student
+participant TakeAutomaticFormativeExamUI as ui <<presentation>>
+control TakeAutomaticFormativeExamController as controller <<application>>
+
+participant FormativeExamService as formativeExamService <<application>>
+
+participant "theStudent:Student" as theStudent <<domain>>
+participant "theCourse:Course" as theCourse <<domain>>
+participant "theFormativeExam:FormativeExam" as theFormativeExam <<domain>>
+participant "theExam:Exam" as theExam <<domain>>
+
+participant ResolutionMain as resolutionMain <<lprog>>
+
+database CourseRepository as courseRepository <<repository>>
+database QuestionRepository as questionRepository <<repository>>
+database FormativeExamRepository as formativeExamRepository <<repository>>
+
+activate Student
+
+    Student -> ui : Pede para responder a um exame formativo automático
+    activate ui
+        ui -> controller : create
+        controller -> formativeExamService : create
+
+        ui -> controller : allStudentCourses = findAllStudentApprovedCoursesInProgressWithActualFormativeExams()
+        activate controller
+            controller -> courseRepository : findAllStudentApprovedCoursesInProgressWithActualFormativeExams(theStudent)
+        deactivate controller
+
+        ui -> ui : Mostra a lista de disciplinas em que o estudante está inscrito
+        ui --> Student : Pede para escolher a disciplina da qual pretende fazer um exame formativo
+
+        Student -> ui : Escolhe a disciplina
+        ui -> controller : allFormativeExamsOfTheCourse = listAllAvailableFormativeExamsOfTheCourse(theCourse)
+        activate controller
+            controller -> formativeExamRepository : listAllAvailableFormativeExamsOfACourse(courseCode)
+        deactivate controller
+
+        ui --> ui : Lista todos os exames formativos automáticos disponíveis da disciplina selecionada
+        ui --> Student : Pede para selecionar o exame formativo que pretende realizar
+
+        Student -> ui : Escolhe o exame formativo que pretende realizar
+        ui -> controller : theExam = transformFormativeExamDataInExam(theCourse, theFormativeExam)
+        activate controller
+            controller -> formativeExamService : transformFormativeExamDataInExam(courseCode, theFormativeExam)
+            activate formativeExamService
+                formativeExamService -> theFormativeExam : theExam = transformInExamObject()
+                formativeExamService -> formativeExamService : generatedQuestions = generateRandomQuestions(courseCode, theFormativeExam)
+                activate formativeExamService
+                    formativeExamService -> formativeExamService : questionAndRequiredNumber = countAllTypeQuestionsQuantityInFormativeExam(theFormativeExam)
+                    activate formativeExamService
+                    deactivate formativeExamService
+                    loop Para cada tipo de questão
+                        formativeExamService -> questionRepository : generateRandomQuestions(courseCode, typeQuestion, typeQuestion))
+                    end loop
+                deactivate formativeExamService
+            deactivate formativeExamService
+        deactivate controller
+
+        ui -> controller : examData = getExamQuestionsString(theExam)
+        activate controller
+            controller -> theExam : examQuestionsToString()
+        deactivate controller
+
+        ui -> ui : Apresenta o exame formativo
+        ui --> Student : Pede ao utilizador para inserir o caminho até ao ficheiro com a resolução do exame formativo
+
+        Student -> ui : Insere o caminho do ficheiro com a resolução do exame formativo
+        ui -> controller : obtainedGrade = parseFormativeExamAnswers(fileToPath, theExam)
+        activate controller
+            controller -> formativeExamService : parseAndHandleFormativeExamGrade(filePath, theExam)
+            activate formativeExamService
+                formativeExamService -> resolutionMain : parseWithVisitor(fileToPath, theExam)
+                formativeExamService -> formativeExamService : calculateFormativeExamMaxGrade(theExam)
+                activate formativeExamService
+                deactivate formativeExamService
+            deactivate formativeExamService
+        deactivate controller
+
+        ui -> ui : Imprime as respostas do estudante que serão dadas ao exame formativo
+        ui --> Student : Pede confirmação para a finalização do exame formativo
+
+        Student -> ui : Confirma operação
+
+        ui -> controller : examFeedback = getExamFeedback(theExam)
+        activate controller
+            controller -> theExam : feedback()
+        deactivate controller
+
+        ui -> ui : Apresenta a nota obtida no exame formativo e o respetivo feedback
+        ui --> Student : Informa o sucesso da operação
+    deactivate ui
+
+deactivate Student
+
+@enduml

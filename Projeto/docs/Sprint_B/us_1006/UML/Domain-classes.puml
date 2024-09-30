@@ -1,0 +1,61 @@
+@startuml
+
+title Domain Classes (DC) - US 1006
+
+top to bottom direction
+
+'Student
+package "<<aggregate>> Student" {
+    entity Student <<entity>> <<root>>
+    class MechanographicNumber <<(V, #FF8B40) value object>>
+}
+
+'Manager
+package "<<aggregate>> Manager" {
+    entity Manager <<entity>> <<root>>
+}
+
+'Course
+package "<<aggregate>> Course" {
+    entity Course <<entity>> <<root>>
+    class CourseTitle <<(V, #FF8B40) value object>>
+    class CourseCode <<(V, #FF8B40) value object>>
+    class CourseDescription <<(V, #FF8B40) value object>>
+    class CourseStatus <<(V, #FF8B40) value object>>
+    class CourseEnrolmentLimits <<(V, #FF8B40) value object>> {
+        minimumEnrolments
+        maximumEnrolments
+    }
+}
+
+'Enrollment
+package "<<aggregate>> Enrollment" {
+    entity Enrollment <<entity>> <<root>>
+    class EnrollmentStatus <<(V, #FF8B40) value object>>
+}
+
+'Teacher
+package "<<aggregate>> Teacher" {
+    entity Teacher <<entity>> <<root>>
+    class Acronym <<(V, #FF8B40) value object>>
+}
+
+Student -down-> MechanographicNumber
+
+Enrollment "1..*" --> "1" Student : has
+
+Course -down-> CourseTitle
+Course -down-> CourseCode
+Course -down-> CourseDescription
+Course -down-> CourseStatus
+Course -down-> CourseEnrolmentLimits
+Course "0..*" --> "1..*" Manager : is managed by >
+Course "1" --> "1" Teacher : has responsible >
+Course "1..*" --> "1..*" Teacher : is taught >
+Course "1" --> "0..*" Enrollment : has >
+
+Enrollment -down-> EnrollmentStatus
+
+Teacher -down-> Acronym
+
+@enduml

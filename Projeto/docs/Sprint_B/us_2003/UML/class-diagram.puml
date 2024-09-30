@@ -1,0 +1,60 @@
+@startuml
+
+title Class Diagram (CD) - US 2003
+
+'Classes
+class ListCourseExamsUI <<presentation>> {
+    doShow()
+}
+
+class JpaCourseRepository <<persistence>> {}
+class InMemoryCourseRepository <<persistence>> {}
+class JpaExamRepository <<persistence>> {}
+class InMemoryExamRepository <<persistence>> {}
+
+class Course <<domain>> {}
+class CourseCode <<(V, #FF8B40) value object>>
+class Teacher <<domain>> {}
+class Exam <<domain>> {}
+
+class ListCourseExamsController <<application>> {
+    +Iterable<Course> listAllTeacherCourses()
+    +Iterable<Exam> listAllCourseExams(CourseCode courseCode)
+}
+class ListCourseService <<application>>{
+    +Iterable<Course> allTeacherCourses(Teacher teacher)
+}
+class ListExamService <<application>>{
+    +Iterable<Exam> allCourseExams(CourseCode courseCode)
+}
+
+interface CourseRepository <<repositories>> {
+    +Iterable<Course> findAllTeacherCourses(Teacher teacher)
+}
+interface ExamRepository <<repositories>> {
+    +Iterable<Exam> findAllCourseExams(courseCode)
+}
+
+'Navigation
+ListCourseExamsUI --> ListCourseExamsController : theController
+ListCourseExamsController --> CourseRepository : repo
+ListCourseExamsController --> ExamRepository : repo
+ListCourseExamsController --> ListCourseService : service
+ListCourseExamsController --> ListExamService : service
+ListCourseExamsController --> Course : course
+ListCourseExamsController --> Teacher : teacher
+ListCourseExamsController --> Exam : exam
+Course --> CourseCode : courseCode
+JpaCourseRepository -> CourseRepository
+InMemoryCourseRepository -> CourseRepository
+JpaExamRepository -> ExamRepository
+InMemoryExamRepository -> ExamRepository
+
+'Dependencies
+ListCourseExamsUI -[dashed]-> Course
+ListCourseExamsUI -[dashed]-> Teacher
+ListCourseExamsUI -[dashed]-> Exam
+ListCourseService -[dashed]-> CourseRepository
+ListExamService -[dashed]-> ExamRepository
+
+@enduml

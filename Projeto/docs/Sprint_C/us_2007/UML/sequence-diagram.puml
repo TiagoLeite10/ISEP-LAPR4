@@ -1,0 +1,77 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 2007
+autonumber
+
+actor Professor as Actor
+participant AddExamQuestionUI as UI <<presentation>>
+control AddExamQuestionController as Controller <<application>>
+participant "theCourse:Course" as Domain <<domain>>
+participant ExamQuestionMain as Main <<lprog>>
+participant ExamQuestionLexer as Lexer <<lprog>>
+participant CommonTokenStream as Stream <<lprog>>
+participant ExamQuestionParser as Parser <<lprog>>
+participant "tree:ParseTree" as Tree <<lprog>>
+participant EvalVisitor as Visitor <<lprog>>
+database CourseRepository as Repository <<repository>>
+
+activate Actor
+    Actor -> UI : Pede para adicionar/atualizar questões de exame a um repositório
+    activate UI
+        UI -> Controller : create
+        UI -> Controller : availableCourses = listAllTeacherCoursesInProgress()
+            activate Controller
+                Controller -> Repository : findAllTeacherCoursesInProgress(theTeacher)
+            deactivate Controller
+
+    UI --> UI : Mostra a lista de disciplinas disponíveis (no estado in_progress) e que são lecionadas pelo próprio professor
+
+    UI --> Actor : Pede para escolher uma disciplina
+
+    Actor -> UI : Escolhe uma disciplina
+
+        deactivate Controller
+
+    UI --> Actor : Pede para introduzir o caminho até ao ficheiro com a informação das questões a adicionar/atualizar
+
+    Actor -> UI : Introduz o caminho até ao ficheiro
+
+        UI -> Controller : parseQuestions(pathToFile)
+        activate Controller
+
+        Controller -> Main : parseWithVisitor(pathToFile)
+        activate Main
+
+        Main -> Visitor : visit(tree)
+        activate Visitor
+        Main -> Visitor : questions()
+        Visitor --> Main : questions
+        deactivate Visitor
+
+        Main --> Controller : questions
+        deactivate Main
+
+        Controller --> UI : questions
+        deactivate Controller
+
+    UI --> Actor : Mostra os dados das questões e pede confirmação para as adicionar/atualizar
+
+    Actor -> UI : Confirma a operação
+
+        UI -> Controller : addQuestions(theCourse, questions)
+        activate Controller
+
+        Controller -> Domain : addListQuestion(questions)
+
+        Controller -> Repository : save(theCourse)
+        Controller --> UI : questions
+        deactivate Controller
+
+    UI --> Actor : Informa o sucesso da operação
+    deactivate UI
+deactivate Actor
+
+@enduml

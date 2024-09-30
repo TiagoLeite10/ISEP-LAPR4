@@ -1,0 +1,83 @@
+@startuml
+title Class Diagram (CD) - US 3002
+
+class CreateBoardUI <<presentation>> {
+    doShow()
+}
+
+class Board <<Domain>> {
+    -title : String
+    -archived : boolean
+    -boardCreationDateTime : BoardCreationDateTime
+    -boardDimensions : BoardDimensions
+    -boardElementLineSet : Set<BoardElementLine>
+    -boardElementColumnSet : Set<BoardElementColumn>
+    #Board(title : String, boardCreationDateTime : BoardCreationDateTime, boardDimensions : BoardDimensions)
+    +boolean addBoardElementLine(title : String, line : int)
+    +boolean addBoardElementColumn(title : String, column : int)
+}
+
+class BoardBuilder <<Domain>> {
+    -theBoard : Board
+    -title : String
+    -boardCreationDateTime : BoardCreationDateTime
+    -boardDimensions : BoardDimensions
+    +BoardBuilder entitle(title : String)
+    +BoardBuilder dimensions(boardDimensions : BoardDimensions)
+    +BoardBuildercreationDateTime(boardCreationDateTime : BoardCreationDateTime)
+    +BoardBuilder withBoardElementColumns(boardElementColumns : List<Pair<String, Integer>>)
+    +BoardBuilder withBoardElementLines(boardElementLines : List<Pair<String, Integer>>)
+    +Board build()
+}
+
+class BoardCreationDateTime <<Domain>> {
+    -boardCreationDateTime : BoardCreationDateTime
+}
+
+class BoardDimensions <<Domain>> {
+    -numColumns : int
+    -numLines : int
+}
+
+class BoardElement <<Domain>> {
+    -title : String
+}
+
+class BoardElementColumn <<Domain>> {
+    -column : int
+}
+
+class BoardElementLine <<Domain>> {
+    -line : int
+}
+
+class CreateBoardController <<Application>> {
+    +boolean validColumnsForABoard(numColumns : int)
+    +boolean validLinesForABoard(numLines : int)
+    +int getMaximumColumnsForABoard()
+    +int getMaximumLinesForABoard()
+    +Board addBoard(title : String, numLines : int, numColumns : int, linesData : List<Pair<String, Integer>>, columnsData : List<Pair<String, Integer>>)
+}
+
+interface BoardRepository <<Repositories>> {
+    +Board save(board : Board)
+}
+
+Board --> BoardCreationDateTime
+Board --> BoardDimensions
+Board --> BoardElementLine
+Board --> BoardElementColumn
+
+BoardElement <|-- BoardElementColumn
+BoardElement <|-- BoardElementLine
+
+CreateBoardUI --> CreateBoardController : theController
+
+CreateBoardController --> BoardRepository : repo
+CreateBoardController --> Board : board
+
+BoardBuilder -[dashed]-> Board
+CreateBoardController -> BoardBuilder : builder
+
+
+@enduml

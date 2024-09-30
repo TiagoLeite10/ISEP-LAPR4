@@ -1,0 +1,35 @@
+@startuml
+'https://plantuml.com/state-diagram
+
+[*] -> created : US 4001 - As User, I want to schedule a meeting
+
+state created {
+}
+
+created --> canceled : User has no overlapping schedule
+
+state canceled {
+}
+
+canceled --> [*]
+
+state invited {
+}
+
+created -> invited : User has overlapped schedule
+
+
+state refused {
+}
+
+invited --> refused
+
+state accepted {
+}
+
+invited --> accepted
+
+refused --> [*]
+accepted --> [*]
+
+@enduml

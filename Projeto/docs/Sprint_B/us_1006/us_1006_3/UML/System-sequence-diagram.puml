@@ -1,0 +1,19 @@
+@startuml
+title System Sequence Diagram (SSD) da us_1006_3
+
+autonumber
+
+actor "Professor" as USER
+participant ":System" as SYS
+
+activate USER
+
+    USER -> SYS : pedido para listar todos os cursos disponiveis para mim
+    activate SYS
+
+    SYS --> USER : lista os cursos que o professor ensina
+    deactivate SYS
+
+deactivate USER
+
+@enduml

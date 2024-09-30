@@ -1,0 +1,42 @@
+@startuml
+
+'Classes
+class AcceptRejectMeetingRequestUI <<presentation>> {
+    doShow()
+}
+
+class AcceptRejectMeetingRequestController <<Application>> {
+    +Iterable<Object[]> listUserPendentMeetingRequest()
+    +ParticipationMeeting acceptMeeting(theParticipationMeeting : ParticipationMeeting, yesOrNo : boolean)
+}
+
+class ParticipationMeeting <<Domain>> {
+    -participationMeetingStatus : ParticipationMeetingStatus
+    +acceptMeeting(yesOrNo : boolean)
+}
+
+Enum ParticipationMeetingStatus <<Domain>> <<Value Object>> {
+}
+
+class SystemUser <<Domain>> {
+    -username
+}
+
+class ParticipationMeetingRepository <<Repositories>> {
+    +ParticipationMeeting save(theParticipationMeeting : ParticipationMeeting)
+}
+
+'Value Objects
+ParticipationMeeting --> ParticipationMeetingStatus
+
+'Dependencies
+AcceptRejectMeetingRequestUI -[dashed]-> ParticipationMeeting
+
+'Navigation
+AcceptRejectMeetingRequestUI --> AcceptRejectMeetingRequestController : theController
+AcceptRejectMeetingRequestController --> ParticipationMeetingRepository : repo
+AcceptRejectMeetingRequestController --> ParticipationMeeting : theParticipationMeeting
+
+ParticipationMeeting "*" --> "1" SystemUser : user
+
+@enduml

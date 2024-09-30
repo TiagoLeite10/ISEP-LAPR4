@@ -1,0 +1,31 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 4002
+autonumber
+
+actor "Utilizador" as Actor
+participant ":Sistema" as System
+
+activate Actor
+
+Actor -> System : Pede para cancelar uma reunião
+activate System
+System --> Actor : Mostra a lista de reuniões por realizar
+deactivate System
+
+Actor -> System : Seleciona a reunião a cancelar
+activate System
+System --> Actor : Mostra os dados da reunião selecionada e pede confirmação da operação a realizar
+deactivate System
+
+Actor -> System : Confirma a operação
+activate System
+System --> Actor : Informa o sucesso da operação
+deactivate System
+
+deactivate Actor
+
+@enduml

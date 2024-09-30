@@ -1,0 +1,74 @@
+@startuml
+
+'Classes
+class TakeAutomaticFormativeExamUI <<presentation>> {
+}
+
+class TakeAutomaticFormativeExamController <<application>> {
++ Iterable<Course> findAllStudentApprovedCoursesInProgressWithActualFormativeExams()
++ Iterable<FormativeExam> listAllAvailableFormativeExamsOfTheCourse( theCourse)
++ Exam transformFormativeExamDataInExam(theCourse, theFormativeExam) {
++ String getExamQuestionsString(theExam)
++ float parseFormativeExamAnswers(filePath, theExam)
++ String getExamFeedback(theExam)
+}
+
+class FormativeExamService <<service>> {
++ Exam transformFormativeExamDataInExam(courseCode, theFormativeExam)
++ float parseAndHandleFormativeExamGrade(filePath, theExam)
++ Map<String, Iterable<Question>> generateRandomQuestions(courseCode, theFormativeExam)
++ Map<String, Integer> countAllTypeQuestionsQuantityInFormativeExam(theFormativeExam)
++ float calculateFormativeExamMaxGrade(theExam)
+}
+
+class Student <<domain>> {
+}
+
+class Course <<domain>> {
+}
+
+class FormativeExam <<domain>> {
++ Exam transformInExamObject()
+}
+
+class Exam <<domain>> {
++ String examQuestionsToString()
+}
+
+class ResolutionMain <<lprog>> {
++ parseWithVisitor(fileToPath, theExam)
+
+}
+
+class CourseRepository <<repository>> {
++ Iterable<Course> findAllStudentApprovedCoursesInProgressWithActualFormativeExams(student)
+}
+
+class QuestionRepository <<repository>> {
++ Iterable<Question> generateRandomQuestions(courseCode, typeQuestion, typeQuestion))
+}
+
+class FormativeExamRepository <<repository>> {
++  Iterable<FormativeExam> listAllAvailableFormativeExamsOfACourse(courseCode)
+}
+
+'Dependencies
+TakeAutomaticFormativeExamUI -[dashed]-> FormativeExam
+
+'Navigation
+TakeAutomaticFormativeExamUI --> TakeAutomaticFormativeExamController : theController
+
+
+TakeAutomaticFormativeExamController --> Student : theStudent
+TakeAutomaticFormativeExamController --> Course : theCourse
+TakeAutomaticFormativeExamController -->  FormativeExam : theFormativeExam
+TakeAutomaticFormativeExamController -->  Exam : theExam
+TakeAutomaticFormativeExamController --> ResolutionMain
+TakeAutomaticFormativeExamController --> FormativeExamService
+TakeAutomaticFormativeExamController --> CourseRepository
+FormativeExamService -->QuestionRepository
+
+FormativeExamService --> FormativeExamRepository : formativeExamRepo
+
+
+@enduml

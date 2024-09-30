@@ -1,0 +1,64 @@
+@startuml
+top to bottom direction
+
+title Domain Classes (DC) - US 3004
+
+hide methods
+skinparam classAttributeIconSize 0
+
+'SystemUser
+package "<<aggregate>> SystemUser" {
+    entity SystemUser <<entity>> <<root>> {}
+    class Username <<(V, #FF8B40) value object>>
+}
+
+'Board
+package "<<aggregate>> Board" {
+    entity Board <<entity>> <<root>> {
+        title
+        archived
+    }
+
+    class BoardCreationDateTime <<(V, #FF8B40) value object>> {
+        dateTime
+    }
+
+    class BoardDimensions <<(V, #FF8B40) value object>> {
+        numColumns
+        numLines
+    }
+
+    'BoardElement
+    abstract BoardElement <<abstract>> {
+        title
+    }
+
+    entity BoardElementLine <<entity>>
+    entity BoardElementColumn <<entity>>
+}
+
+'BoardMembers
+package "<<aggregate>> BoardMembers" {
+    entity BoardMembers <<entity>> <<root>> {
+        joinedDate
+    }
+
+    class AccessPermission <<(V, #FF8B40) value object>>
+}
+
+Board -down-> BoardDimensions
+Board -down-> BoardCreationDateTime
+Board "1" --> "1..*" BoardElementLine : has >
+Board "1" --> "1..*" BoardElementColumn : has >
+Board "1" --> "1..*" BoardMembers : has >
+Board "0..*" --> "1" SystemUser : created by >
+
+SystemUser --> Username
+
+BoardElementLine -down-|> BoardElement
+BoardElementColumn -down-|> BoardElement
+
+BoardMembers -down-> AccessPermission
+BoardMembers "0..*" --> "1..*" SystemUser : has >
+
+@enduml

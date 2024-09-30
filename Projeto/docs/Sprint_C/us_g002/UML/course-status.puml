@@ -1,0 +1,31 @@
+@startuml
+'https://plantuml.com/state-diagram
+
+[*] -> close : evento criar
+
+state close {
+}
+
+close -> open : evento abrir
+
+state open {
+}
+
+open --> enroll : evento abrir inscrições
+
+state enroll {
+}
+
+enroll --> in_progress : evento fechar inscrições
+
+state in_progress {
+}
+
+closed <- in_progress : evento fechar
+
+state closed {
+}
+
+[*] <- closed
+
+@enduml

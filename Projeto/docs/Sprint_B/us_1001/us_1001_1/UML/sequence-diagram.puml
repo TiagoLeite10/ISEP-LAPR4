@@ -1,0 +1,83 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1001_1
+autonumber
+
+actor Gerente as Actor
+participant AddUserUI as UI <<presentation>>
+participant AddUserController as Controller <<application>>
+participant "roles:BaseRoles" as RolesDomain <<domain>>
+participant "user:SystemUser" as UserDomain <<domain>>
+participant "teacher:Teacher" as TeacherDomain <<domain>>
+participant "student:Student" as StudentDomain <<domain>>
+
+
+Actor -> UI: Pede para adiciona um utilizador
+activate Actor
+activate UI
+    UI -> Controller: create
+
+    UI --> Actor: Pede informação do utilizador
+    Actor -> UI: Username, palavra-passe, primeiro nome, último nome e email
+
+    UI -> Controller : getRoleTypes()
+    activate Controller
+    Controller -> RolesDomain : nonUserValues()
+    activate RolesDomain
+    RolesDomain -> Controller : roles
+    deactivate RolesDomain
+    Controller -> UI : roles
+    deactivate Controller
+
+    loop opção != 0
+        UI --> Actor: Mostra a lista do tipo de roles
+        Actor -> UI: Tipo de role
+    end
+
+    alt Se for Professor
+        UI --> Actor: Pede informação do professor
+        Actor -> UI : Número de contribuinte, data de nascimento e acrónimo
+
+        UI -> Controller: addTeacher(username, \npassword, firstName,\nlastName, email, \nroles, taxPayerNumber, \nbirthDate, acronym)
+        activate Controller
+            |||
+            ref over Controller
+                sequence-diagram_add_teacher
+            end ref
+            |||
+            Controller->UI: teacher
+        deactivate Controller
+
+        else Se for Estudante
+        UI --> Actor: Pede informação do estudante
+
+        UI -> Controller: addStudent(username, \npassword, firstName,\nlastName, email, \nroles, taxPayerNumber, \nbirthDate, mecanographicNumber)
+        activate Controller
+            |||
+            ref over Controller
+                sequence-diagram_add_student
+            end ref
+            |||
+            Controller->UI: student
+        Actor -> UI : Número de contribuinte, data de nascimento e número mecanográfico
+        deactivate Controller
+
+        else Senão é Manager
+        UI -> Controller: addUser(username, \npassword, firstName,\nlastName, email, \nroles)
+        activate Controller
+            |||
+            ref over Controller
+                sequence-diagram_add_user
+            end ref
+            |||
+            Controller->UI: user
+        deactivate Controller
+    end
+
+        UI-->Actor: Informa o sucesso da operação
+deactivate UI
+deactivate Actor
+@enduml

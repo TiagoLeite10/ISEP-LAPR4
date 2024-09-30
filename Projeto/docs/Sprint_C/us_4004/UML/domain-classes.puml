@@ -1,0 +1,47 @@
+@startuml
+
+top to bottom direction
+
+title Domain Classes (DC) - US 4004
+
+hide methods
+skinparam classAttributeIconSize 0
+
+'SystemUser
+package "<<aggregate>> SystemUser" {
+    entity SystemUser <<entity>> <<root>> {
+    }
+}
+
+'Meeting
+package "<<aggregate>> Meeting" {
+    entity Meeting <<entity>> <<root>>
+    entity ParticipationMeeting <<entity>>
+    class ParticipationMeetingStatus <<(V, #FF8B40) value object>>
+    note bottom
+        Diagrama de estados
+        disponível com o nome
+        "participation-meeting-status"
+    end note
+}
+
+'Event
+abstract Event <<abstract>>
+class EventDuration <<(V, #FF8B40) value object>>
+class EventDate <<(V, #FF8B40) value object>>
+
+'Value Objects
+Event -down-> EventDuration
+Event -down-> EventDate
+
+ParticipationMeeting -down-> ParticipationMeetingStatus
+
+'Inheritance
+Meeting --|> Event
+
+'Relations
+ParticipationMeeting "0..*" --> "1..*" SystemUser : has >
+Meeting "1" --> "1..*" ParticipationMeeting : creates >
+
+
+@enduml

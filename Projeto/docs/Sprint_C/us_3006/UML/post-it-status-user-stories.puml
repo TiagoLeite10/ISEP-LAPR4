@@ -1,0 +1,16 @@
+@startuml
+'https://plantuml.com/state-diagram
+
+[*] -> exist : US 3006 - As User, I want to create a post-it on a board
+
+state exist {
+}
+
+exist -> removed : US 3007 - As User, I want to change a post-it
+
+state removed {
+}
+
+removed -> [*]
+
+@enduml

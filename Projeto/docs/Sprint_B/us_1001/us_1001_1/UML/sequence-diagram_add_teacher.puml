@@ -1,0 +1,50 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title SD_Add_Teacher
+
+participant AddUserController as Controller <<application>>
+participant TeacherManagementService as Service <<service>>
+participant TeacherBuilder as Builder <<builder>>
+participant "user:SystemUser" as UserDomain <<domain>>
+participant "person:Person" as PersonDomain <<domain>>
+participant "teacher:Teacher" as TeacherDomain <<domain>>
+participant PersistenceContext as Persistence <<persistence>>
+participant RepositoryFactory as Factory <<factory>>
+database TeacherRepository as Repository <<repository>>
+
+[o-> Controller :  addTeacher(username, \npassword, firstName,\nlastName, email, \nroles, taxPayerNumber, \nbirthDate, acronym)
+activate Controller
+    Controller -> Service: create
+    Controller -> Service: registerNewTeacher(username, \npassword, firstName,\nlastName, email, \nroles, createdOn, taxPayerNumber, \nbirthDate, acronym)
+    activate Service
+
+    Service -> Builder: create
+    Service -> Builder:createTeacher()
+    activate Builder
+    Builder -> TeacherDomain: create (person, acronym)
+    TeacherDomain->Builder: teacher
+    Builder -> Service: teacher
+    deactivate Builder
+
+    Service -> Persistence: repositories()
+    activate Persistence
+        Persistence -> Factory: create
+        Persistence -> Service: factory
+    deactivate Persistence
+
+    Service -> Factory: teachers()
+    activate Factory
+        Factory -> Repository: create
+        Factory -> Service: teacherRepository
+    deactivate Factory
+
+    Service->Repository:save(teacher)
+    Service -> Controller : teacher
+    deactivate Service
+    [<-- Controller : teacher
+deactivate Controller
+
+@enduml

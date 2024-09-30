@@ -1,0 +1,75 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam handwritten true
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1008
+autonumber
+
+actor "Aluno" as Aluno
+participant "<<presentation>> \n CreateEnrollmentUI" as UI
+control "<<application>> \n CreateEnrollmentController" as Controller
+participant EnrollementBuilder as Builder <<builder>>
+participant ListCourseService as Service <<application>>
+participant "<<domain>> \n Course:Course" as CourseDomain
+participant "enrollement:Enrollement" as EnrollementDomain <<domain>>
+database "<<repository>> \n CourseRepository" as Repository
+
+activate Aluno
+    Aluno -> UI : Pede para inscrever em uma disciplina
+    activate UI
+        UI -> Controller : create
+        Controller -> Service : create
+
+        UI -> Controller : listAllCoursesNotEnrolled()
+        activate Controller
+
+            Controller -> Service : allCoursesNotEnrolled()
+            activate Service
+
+                Service -> Repository : list = findAllCoursesNotEnrolled()
+                activate Repository
+                deactivate Repository
+
+                Service --> Controller : list
+            deactivate Service
+            Controller --> UI : list
+        deactivate Controller
+
+        UI --> Aluno : Lista as disciplinas que se encontram com inscrições abertas
+
+
+        Aluno -> UI : Escolhe a disciplina
+
+            UI -> Controller : addEnrollment(course)
+            activate Controller
+
+                Controller -> Builder : create
+                Controller -> Builder : createEnrollment()
+                    activate Builder
+
+                    Builder -> EnrollementDomain : createEnrollment(student)
+                    activate EnrollementDomain
+                        EnrollementDomain -> Builder : enrollment
+                    deactivate EnrollementDomain
+
+                    Builder -> Controller : enrollment
+                    deactivate Builder
+
+                      Controller -> CourseDomain : addEnrollment(enrollment)
+                     activate CourseDomain
+             deactivate CourseDomain
+
+                Controller -> Repository : save(course)
+                        Controller --> UI : enrollment
+              deactivate Controller
+
+
+        UI --> Aluno : Informa o sucesso da operação
+
+    deactivate UI
+
+deactivate Aluno
+
+@enduml

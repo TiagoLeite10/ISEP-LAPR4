@@ -1,0 +1,71 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 3007
+autonumber
+
+actor "Utilizador" as Actor
+participant ":Sistema" as System
+
+activate Actor
+
+Actor -> System : Pede para mudar um post-it num quadro (board)
+activate System
+
+System --> Actor : Mostra a lista de quadros ativos em que o utilizador é dono ou tem permissões de escrita
+System --> Actor : Pede para escolher o quadro a mudar o post-it
+deactivate System
+
+Actor -> System : Escolhe o quadro a modificar o post-it
+activate System
+
+System --> Actor : Mostra a lista de post-its do quadro selecionado
+System --> Actor : Pede para escolher o post-it a modificar
+deactivate System
+
+Actor -> System : Escolhe o post-it a modificar
+activate System
+
+System --> Actor : Pede para escolher entre mudar o conteúdo ou a posição do post-it
+deactivate System
+
+Actor -> System : Escolhe a opção pretendida
+activate System
+
+alt Opção: Mudar conteúdo do post-it
+
+    System --> Actor : Pede para inserir o novo conteúdo do post-it
+    Actor -> System : Insere o novo conteúdo do post-it
+
+    else Opção: Mudar posição do post-it
+
+    System --> Actor : Mostra a lista de linhas do quadro
+    System --> Actor : Pede para escolher a nova linha da posição do post-it
+    deactivate System
+
+    Actor -> System : Escolhe a nova linha da posição do post-it
+    activate System
+
+    System --> Actor : Mostra a lista de colunas do quadro
+    System --> Actor : Pede para escolher a nova coluna da posição do post-it
+    deactivate System
+
+    Actor -> System : Escolhe a nova coluna da posição do post-it
+    activate System
+end
+
+System --> Actor : Mostra a informação do post-it modificado
+System --> Actor : Pede confirmação da operação
+deactivate System
+
+Actor -> System : Confirma a operação
+activate System
+
+System --> Actor : Informa o sucesso da operação
+deactivate System
+
+deactivate Actor
+
+@enduml

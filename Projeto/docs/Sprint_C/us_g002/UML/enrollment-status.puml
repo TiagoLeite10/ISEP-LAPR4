@@ -1,0 +1,12 @@
+@startuml
+'https://plantuml.com/state-diagram
+
+[*] --> Pending : inscrição do aluno na disciplina
+
+Pending --> Approved : aprovado
+Pending --> Reject : rejeitado
+
+Reject --> [*]
+Approved--> [*]
+
+@enduml

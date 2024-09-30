@@ -1,0 +1,26 @@
+@startuml
+
+
+class OpenCloseCourseUI <<presentation>> {
+    doShow()
+}
+
+class JpaCourseRepository <<persistence>> {}
+class InMemoryCourseRepository <<persistence>> {}
+
+class Course <<Domain>> {}
+
+class OpenCloseCourseController <<Application>> {}
+class ListCourseService <<Application>> {}
+
+
+class CourseRepository <<Repositories>> {}
+
+OpenCloseCourseUI -[dashed]-> Course
+OpenCloseCourseUI --> OpenCloseCourseController : theController
+OpenCloseCourseController --> CourseRepository : repo
+OpenCloseCourseController --> ListCourseService : service
+OpenCloseCourseController --> Course : theCourse
+ListCourseService -[dashed]-> CourseRepository
+
+@endumla

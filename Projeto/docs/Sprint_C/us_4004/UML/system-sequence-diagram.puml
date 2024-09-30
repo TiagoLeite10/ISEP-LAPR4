@@ -1,0 +1,27 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 4004
+autonumber
+
+actor "Utilizador" as User
+participant ":Sistema" as Sistema
+
+activate User
+
+    User -> Sistema : Pede para listar todos os participantes na reunião
+    activate Sistema
+        Sistema --> User : Mostra a lista de todas as reuniões que participa
+    deactivate Sistema
+
+    User -> Sistema : Seleciona a reunião que pretende saber a lista de todos os participantes numa reunião e \n o respetivo status
+    activate Sistema
+        Sistema --> User : Mostra a lista de todos os participantes e o status
+    deactivate Sistema
+    deactivate Sistema
+
+deactivate User
+
+@enduml

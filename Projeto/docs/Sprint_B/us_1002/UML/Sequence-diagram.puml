@@ -1,0 +1,64 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam handwritten true
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1004
+autonumber
+
+actor "Gerente" as Gerente
+participant "<<presentation>> \n CreateCourseUI" as UI
+control "<<application>> \n CreateCourseController" as Controller
+participant CourseBuilder as Builder <<builder>>
+participant "<<domain>> \n theCourse:Course" as Domain
+participant PersistenceContext as Persistence <<persistence>>
+participant RepositoryFactory as Factory <<factory>>
+database "<<repository>> \n CourseRepository" as cRepository
+
+activate Gerente
+    Gerente -> UI : Pede para criar uma disciplina
+    activate UI
+
+    UI -> Controller : create
+
+    UI --> Gerente : pede a informação do curso
+
+    Gerente -> UI : descrição da disciplina, estado da disciplina,\n titulo da disciplina, código da disciplina, inscrições mínimas e máximas
+
+    UI -> Controller : createCourse(courseCode, courseTitle, \ncourseDescription, minimumEnrolments, maximumEnrolments )
+activate Controller
+        Controller -> Builder: create
+
+        Controller -> Builder:createCourse()
+        activate Builder
+            Builder -> Domain: createCourse(courseCode, courseTitle, \ncourseDescription, minimumEnrolments, maximumEnrolments )
+            activate Domain
+                Domain-->Builder: course
+            deactivate Domain
+            Builder --> Controller:course
+        deactivate Builder
+
+        Controller -> Persistence: repositories()
+        activate Persistence
+            Persistence -> Factory: create
+            Persistence --> Controller: factory
+        deactivate Persistence
+
+        Controller -> Factory: courses()
+        activate Factory
+            Factory -> cRepository: create
+            Factory --> Controller: courseRepository
+        deactivate Factory
+
+        Controller->cRepository:save(course)
+        Controller-->UI: course
+    deactivate Controller
+
+    UI --> Gerente : Informa o sucesso da operação
+
+    deactivate UI
+
+deactivate Gerente
+
+@enduml

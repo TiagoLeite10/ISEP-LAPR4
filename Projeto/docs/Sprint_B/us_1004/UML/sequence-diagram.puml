@@ -1,0 +1,89 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1004
+autonumber
+
+actor "Gerente" as Gerente
+participant "<<presentation>> \n OpenCloseCourseUI" as ui
+control "<<application>> \n OpenCloseCourseController" as controller
+participant "<<application>> \n ListCourseService" as lstCourseService
+participant "<<domain>> \n theCourse:Course" as course
+participant "<<domain>> <<Value Object>> \n courseDate:CourseDate" as courseDate
+participant "<<domain>> \n exam:Exam" as exam
+participant "<<domain>> \n extraClass:ExtraClass" as extraClass
+participant "<<domain>> \n recurringClass:RecurringClass" as recurringClass
+database "<<repository>> \n CourseRepository" as cRepository
+
+activate Gerente
+    Gerente -> ui : Pede para abrir/fechar uma disciplina
+    activate ui
+        ui -> controller : create
+        controller -> lstCourseService : create
+        ui -> controller : allCloseCourses = listCloseCourses()
+        activate controller
+            controller -> lstCourseService : allCloseCourses()
+        deactivate controller
+
+        ui -> controller : allInProgressCourses = listInProgressCourses()
+        activate controller
+            controller -> lstCourseService : allInProgressCourses()
+        deactivate controller
+
+
+        ui -> ui : Mostra informação sobre disciplinas no estado close e disciplinas no estado in_progress
+
+        ui --> Gerente : Pede para escolher se pretende abrir ou fechar um curso
+        Gerente -> ui : Escolhe a operação que pretende realizar
+
+        alt Se o gerente pretende abrir uma disciplina
+            ui -> ui : Mostra informação sobre disciplinas que podem ser abertas
+        else Se o gerente pretende fechar uma disciplina
+            ui -> ui : Mostra informação sobre disciplinas que podem ser fechadas
+        end
+
+        ui --> Gerente : Pede para escolher a disciplina
+
+        Gerente -> ui : Escolhe a disciplina que pretende abrir/fechar
+        ui -> ui : Mostra os dados do curso selecionado
+        ui --> Gerente :  Pede confirmação da operação a realizar
+
+        Gerente -> ui : Confirma a operação
+        ui -> controller : openCloseCourse(theCourse)
+        activate controller
+            controller -> course : nextState()
+            activate course
+                alt Se for fechar a disciplina
+                    course -> course : checkIfCanClose()
+                    activate course
+                        course -> course : hasFutureExams = hasFutureExams()
+                        activate course
+                        deactivate course
+
+                        course -> course : hasFutureExtraClass = hasFutureExtraClass()
+                        activate course
+                        deactivate course
+
+                        course -> course : hasFutureRecurringClass = hasFutureRecurringClass()
+                        activate course
+                        deactivate course
+                    deactivate course
+                    course -> courseDate : startDate = cloneStartDate()
+                    activate courseDate
+                    deactivate courseDate
+                    course -> courseDate : create(startDate, null)
+                end
+            deactivate course
+            controller -> cRepository : save(theCourse)
+            controller --> ui : theCourse
+        deactivate controller
+
+        ui --> Gerente : Informa o sucesso da operação
+    deactivate ui
+
+
+deactivate Gerente
+
+@enduml

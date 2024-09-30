@@ -1,0 +1,35 @@
+@startuml
+
+top to bottom direction
+
+'Meeting
+package "<<aggregate>> Meeting" {
+    entity Meeting <<entity>> <<root>>
+    entity ParticipationMeeting <<entity>>
+    class ParticipationMeetingStatus <<(V, #FF8B40) value object>>
+
+}
+
+'Event
+abstract Event <<abstract>>
+class EventDuration <<(V, #FF8B40) value object>>
+class EventDate <<(V, #FF8B40) value object>>
+
+'SystemUser
+package "<<aggregate>> SystemUser" {
+    entity SystemUser <<entity>> <<root>> {
+
+    }
+}
+
+Meeting --|> Event
+Meeting "1" --> "1..*" ParticipationMeeting : creates >
+Meeting "0..*" --> "1" SystemUser : managed by >
+
+ParticipationMeeting -down-> ParticipationMeetingStatus
+ParticipationMeeting "0..*" --> "1..*" SystemUser : has >
+
+Event -down-> EventDuration
+Event -down-> EventDate
+
+@enduml

@@ -1,0 +1,31 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 1003
+autonumber
+
+actor "Gerente" as Gerente
+participant ":Sistema" as Sistema
+
+activate Gerente
+    Gerente -> Sistema : Pede para abrir/fechar uma incrição num curso
+    activate Sistema
+        Sistema --> Gerente : Mostra a informação das disciplinas que se encontram no estado aberto
+        Sistema --> Gerente : Pede para escolher a disciplina
+    deactivate Sistema
+
+    Gerente -> Sistema : Escolhe a disciplna que pretende abrir/fechar inscrições
+    activate Sistema
+        Sistema --> Gerente : Mostra os dados do curso selecionado e pede confirmação da operação a realizar
+    deactivate Sistema
+
+    Gerente -> Sistema : Confirma a operação
+    activate Sistema
+        Sistema --> Gerente : Informa o sucesso da operação
+    deactivate Sistema
+
+deactivate Gerente
+
+@enduml

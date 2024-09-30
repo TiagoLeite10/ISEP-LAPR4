@@ -1,0 +1,34 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 1007
+autonumber
+
+actor "Gerente" as Actor
+participant ":Sistema" as System
+
+activate Actor
+
+Actor -> System : Pede para inscrever alunos, em massa
+activate System
+
+System --> Actor : Pede para introduzir o caminho do csv
+deactivate System
+
+Actor -> System : Introduz o caminho do csv
+activate System
+
+System --> Actor : Mostra os dados a importar e pede confirmação para os importar
+deactivate System
+
+Actor -> System : Confirma a operação
+activate System
+
+System --> Actor : Mostra sucesso da operação
+deactivate System
+
+deactivate Actor
+
+@enduml

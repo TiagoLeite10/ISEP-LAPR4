@@ -1,0 +1,35 @@
+@startuml
+
+'Board
+package "<<aggregate>> Board" {
+    entity Board <<entity>> <<root>> {
+        title
+        archived
+    }
+
+    class BoardCreationDateTime <<(V, #FF8B40) value object>> {
+        dateTime
+    }
+
+    class BoardDimensions <<(V, #FF8B40) value object>> {
+        column
+        line
+    }
+
+    'BoardElement
+    abstract BoardElement <<abstract>> {
+        title
+    }
+
+    entity BoardElementLine <<entity>>
+    entity BoardElementColumn <<entity>>
+}
+
+Board -down-> BoardDimensions
+Board -down-> BoardCreationDateTime
+Board "1" --> "1..*" BoardElement : has >
+
+BoardElementLine --|> BoardElement
+BoardElementColumn --|> BoardElement
+
+@enduml

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence">
+  <persistence-unit name="eapli.base">
+    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+    <class>eapli.framework.infrastructure.authz.domain.model.SystemUser</class>
+    <class>eapli.framework.infrastructure.authz.domain.model.Role</class>
+    <class>eapli.framework.infrastructure.authz.domain.model.RoleSet</class>
+    <class>eapli.framework.infrastructure.authz.domain.model.RoleAssignment</class>
+    <class>eapli.base.clientusermanagement.domain.Teacher</class>
+    <class>eapli.base.clientusermanagement.domain.Student</class>
+    <class>eapli.base.coursemanagement.domain.Course</class>
+    <class>eapli.base.enrollmentmanagement.domain.Enrollment</class>
+    <class>eapli.base.classmanagement.domain.RecurringClass</class>
+    <class>eapli.base.classmanagement.domain.ClassInstance</class>
+    <class>eapli.base.eventmanagement.domain.ExtraClass</class>
+    <class>eapli.base.eventmanagement.domain.Meeting</class>
+    <class>eapli.base.eventmanagement.domain.ParticipationMeeting</class>
+    <class>eapli.base.boardmanagement.domain.Board</class>
+    <class>eapli.base.boardmanagement.domain.BoardElementColumn</class>
+    <class>eapli.base.boardmanagement.domain.BoardElementLine</class>
+    <class>eapli.base.boardmanagement.domain.BoardMember</class>
+    <class>eapli.base.exammanagement.domain.Exam</class>
+    <class>eapli.base.exammanagement.domain.Header</class>
+    <class>eapli.base.exammanagement.domain.ExamSection</class>
+    <class>eapli.base.questionmanagement.domain.Question</class>
+    <class>eapli.base.questionmanagement.domain.Answer</class>
+    <class>eapli.base.questionmanagement.domain.Matching</class>
+    <class>eapli.base.questionmanagement.domain.MultipleChoice</class>
+    <class>eapli.base.questionmanagement.domain.ShortAnswer</class>
+    <class>eapli.base.questionmanagement.domain.Numerical</class>
+    <class>eapli.base.questionmanagement.domain.SelectMissingWords</class>
+    <class>eapli.base.questionmanagement.domain.TrueFalse</class>
+    <class>eapli.base.formativeexammanagement.domain.FormativeExam</class>
+    <class>eapli.base.formativeexammanagement.domain.FormativeExamSection</class>
+    <class>eapli.base.takenexammanagement.domain.TakenExam</class>
+    <class>eapli.base.postitmanagement.domain.PostIt</class>
+
+    <properties>
+      <!--<property name="javax.persistence.jdbc.url" value="jdbc:h2:tcp://localhost/~/base"/>-->
+
+      <!-- Developement only -->
+      <property name="javax.persistence.jdbc.url" value="jdbc:h2:./db/base;MV_STORE=FALSE;AUTO_SERVER=true;"/>
+      <property name="javax.persistence.jdbc.user" value="sa"/>
+      <property name="javax.persistence.jdbc.password" value=""/>
+
+      <!-- Production -->
+      <!--
+      <property name="javax.persistence.jdbc.url" value="jdbc:h2:tcp://vsgate-s2.dei.isep.ipp.pt:11045/base;MODE=MySQL"/>
+      <property name="javax.persistence.jdbc.user" value="admin"/>
+      <property name="javax.persistence.jdbc.password" value="GreenCode"/>
+      -->
+
+      <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
+      <!-- <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/> -->
+      <property name="hibernate.show_sql" value="false" />
+      <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+
+    </properties>
+  </persistence-unit>
+</persistence>

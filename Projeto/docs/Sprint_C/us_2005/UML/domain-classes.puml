@@ -1,0 +1,31 @@
+@startuml
+top to bottom direction
+
+title Domain Classes (DC) - US 2005
+
+hide methods
+skinparam classAttributeIconSize 0
+
+'TakenExam
+package "<<aggregate>> TakenExam" {
+    entity TakenExam <<entity>> <<root>>
+    class TakenExamDateTime <<(V, #FF8B40) value object>>
+    class Grade <<(V, #FF8B40) value object>>
+}
+
+'Student
+package "<<aggregate>> Student" {
+    entity Student <<entity>> <<root>>
+}
+
+'Exam
+package "<<aggregate>> Exam" {
+    entity Exam <<entity>> <<root>>
+}
+
+TakenExam -down-> TakenExamDateTime
+TakenExam -down-> Grade
+TakenExam "0..*" --> "1" Student : taken by >
+TakenExam "0..*" --> "1" Exam : is >
+
+@enduml

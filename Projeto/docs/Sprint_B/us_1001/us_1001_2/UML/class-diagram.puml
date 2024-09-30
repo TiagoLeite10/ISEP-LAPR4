@@ -1,0 +1,53 @@
+@startuml
+
+title Class Diagram (CD) - US 1001_2
+
+class ActivateDeactivateUserUI <<presentation>> {
+    doShow()
+}
+
+interface RepositoryFactory <<factory>> {}
+class PersistenceContext <<persistence>> {}
+class JpaAutoTxUserRepository <<persistence>> {}
+class InMemoryUserRepository <<persistence>> {}
+
+class SystemUser <<Domain>> {
+    +activate()
+    +deactivate()
+}
+class Username <<(V, #FF8B40) value object>>
+
+class ActivateDeactivateUserController <<Application>> {
+    +Iterable<SystemUser> listAllUsers()
+    +SystemUser activateUser(Username user)
+    +SystemUser deactivateUser(Username user)
+}
+class UserManagementService <<Application>> {
+    +Iterable<SystemUser> allUsers()
+    +SystemUser activateUser(Username user)
+    +SystemUser deactivateUser(Username user)
+}
+
+interface UserRepository <<Repositories>> {
+    +Iterable<SystemUser> findAll()
+    +SystemUser save(SystemUser user)
+}
+
+'Navigation
+ActivateDeactivateUserUI --> ActivateDeactivateUserController : theController
+ActivateDeactivateUserController --> UserRepository : repo
+ActivateDeactivateUserController --> UserManagementService : service
+ActivateDeactivateUserController --> SystemUser : user
+SystemUser --> Username
+JpaAutoTxUserRepository -> UserRepository
+InMemoryUserRepository -> UserRepository
+
+'Dependencies
+ActivateDeactivateUserController -[dashed]-> RepositoryFactory
+ActivateDeactivateUserController -[dashed]-> PersistenceContext
+RepositoryFactory -[dashed]-> UserRepository
+RepositoryFactory -[dashed]-> PersistenceContext
+UserRepository -[dashed]-> PersistenceContext
+UserManagementService -[dashed]-> UserRepository
+
+@enduml

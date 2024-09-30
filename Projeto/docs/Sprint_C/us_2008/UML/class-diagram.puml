@@ -1,0 +1,65 @@
+@startuml
+
+'Classes
+class CreateAutomaticFormativeExamsUI <<presentation>> {
+    #boolean doShow()
+}
+
+class CreateAutomaticFormativeExamsController <<application>> {
+    +Iterable<Course> findAllTeacherCoursesInProgress()
+    +FormativeExam parseFormativeExam(theCourse : Course, pathToFile : String)
+    +Course createFormativeExam(theCourse : Course, theFormativeExam : FormativeExam)
+}
+
+class Teacher <<domain>> {
+}
+
+class Course <<domain>> {
+    -Set<FormativeExam> formativeExams
+    +void addFormativeExam(formativeExam : FormativeExam)
+}
+
+class FormativeExamMain <<lprog>> {
+    +{static}FormativeExam parseWithVisitor(pathToFile : String)
+}
+
+class FormativeExam <<domain>> {
+    -ExamTitle title
+    -ExamDateTime dateTime
+    -Header header
+    +void addFormativeExamSection(formativeExamSection : FormativeExamSection)
+}
+
+class FormativeExamSection <<domain>> {
+    -questionAndRequiredNumber
+    -SectionDescription sectionDescription
+}
+
+class FormativeExamService <<application>> {
+    +void checkFormativeExamNumberOfTypeQuestions(theCourse : Course, theFormativeExam : FormativeExam)
+}
+
+class CourseRepository <<repository>> {
+    +Iterable<Course> findAllTeacherCoursesInProgress(theTeacher : Teacher)
+    +Course save(theCourse : Course)
+}
+
+class QuestionRepository <<repository>> {
+    +Integer countTypeQuestion(theCourse : Course, typeQuestion : String)
+}
+
+'Dependencies
+CreateAutomaticFormativeExamsUI -[dashed]-> FormativeExam
+
+'Navigation
+CreateAutomaticFormativeExamsUI --> CreateAutomaticFormativeExamsController : theController
+CreateAutomaticFormativeExamsController --> CourseRepository : courseRepo
+CreateAutomaticFormativeExamsController --> FormativeExamService : service
+CreateAutomaticFormativeExamsController --> FormativeExam : theFormativeExam
+CreateAutomaticFormativeExamsController --> Teacher : theTeacher
+CreateAutomaticFormativeExamsController --> FormativeExamMain : FormativeExamMain
+CreateAutomaticFormativeExamsController --> Course : theCourse
+FormativeExamService --> QuestionRepository : questionRepo
+FormativeExam "1" --> "1..*" FormativeExamSection : Has
+
+@enduml

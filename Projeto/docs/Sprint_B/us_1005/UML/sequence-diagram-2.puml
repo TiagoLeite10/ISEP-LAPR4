@@ -1,0 +1,67 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram 2 (SSD) - US 1005 - Set Course Teacher
+autonumber
+
+actor "Gerente" as Gerente
+participant "<<presentation>> \n SetCourseTeacherUI" as ui
+control "<<application>> \n SetCourseTeacherController" as controller
+participant "<<application>> \n ListCourseService" as lstCourseService
+participant "<<application>> \n ListTeacherService" as lstTeacherService
+participant "<<domain>> \n theCourse:Course" as course
+participant "<<domain>> \n theTeacher:Teacher" as teacher
+database "<<repository>> \n CourseRepository" as cRepository
+database "<<repository>> \n TeacherRepository" as tRepository
+
+activate Gerente
+
+    Gerente -> ui : Pede para adicionar um professor a uma disciplina
+    activate ui
+
+        ui -> controller : create
+        controller -> lstCourseService : create
+        controller -> lstTeacherService : create
+
+        ui -> controller : allCoursesNotClosed = allCoursesNotClosed()
+        activate controller
+            controller -> lstCourseService : allCoursesNotClosed()
+        deactivate controller
+
+        ui -> ui : Mostra a lista de disciplinas
+
+        ui --> Gerente : Pede para selecionar uma disciplina
+
+        Gerente -> ui : Seleciona uma disciplina
+
+        ui -> controller : possibleTeachersForTheCourse = allTeachersWhoDoNotTeachThisCourse(theCourse)
+        activate controller
+            controller -> lstTeacherService : allTeachersWhoDoNotTeachThisCourse(theCourse)
+        deactivate controller
+
+        ui -> ui : Mostra a lista de professores com excessão \ndos professores que já lecionam esta disciplina
+        ui --> Gerente : Pede para selecionar um professor
+
+        Gerente -> ui : Seleciona um professor
+        ui -> ui : Mostra a informação a ser tratada
+        ui --> Gerente : Pede confirmação da operação
+
+        Gerente -> ui : Confirma a operação
+
+        ui -> controller : setCourseTeacher(theCourse, theTeacher)
+        activate controller
+            controller -> course : addTeacherToCourse(theTeacher)
+            activate course
+            deactivate course
+            controller -> cRepository : save(theCourse)
+            controller --> ui : theCourse
+        deactivate controller
+
+        ui --> Gerente : Informa o sucesso da operação
+    deactivate ui
+
+deactivate Gerente
+
+@enduml

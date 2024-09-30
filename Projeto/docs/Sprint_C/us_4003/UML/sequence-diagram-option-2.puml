@@ -1,0 +1,53 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 4003
+autonumber
+
+actor "User" as User
+participant AcceptRejectMeetingRequestUI as ui <<presentation>>
+control AcceptRejectMeetingRequestController as controller <<application>>
+participant "theParticipationMeeting:ParticipationMeeting" as participationMeeting <<domain>>
+database ParticipationMeetingRepository as participationMeetingRepository <<repository>>
+
+activate User
+
+    User -> ui : Pede para aceitar/recusar um convite recebido para uma meeting
+    activate ui
+        ui -> controller : create
+
+        ui -> controller : pendentMeetingRequestList = listUserPendentMeetingRequest()
+        activate controller
+                    controller -> participationMeetingRepository : findPendentMeetingRequestOfUser(username, now)
+                deactivate controller
+
+        ui -> ui : Mostra a lista de convites recebidos para participar em meetings que ainda não ocorreram
+
+        ui --> User : Pede para escolher um convite recebido para uma meeting
+
+        User -> ui : Escolhe um convite para uma dada meeting
+        ui --> User : Pede para selecionar se pretende aceitar ou recusar o convite
+
+        User -> ui : Seleciona se pretende aceitar ou recusar o convite
+        ui -> ui : Mostra os dados da operação a realizar
+        ui --> User : Pede confirmação
+
+        User -> ui : Confirma a operação
+
+        ui -> controller : acceptMeeting(theParticipationMeeting, yesOrNo)
+        activate controller
+            controller -> participationMeeting : acceptMeeting(yesOrNo)
+            activate participationMeeting
+            deactivate participationMeeting
+            controller -> participationMeetingRepository : save(theParticipationMeeting)
+            controller --> ui : theParticipationMeeting
+        deactivate controller
+
+        ui --> User : Informa o sucesso da operação
+    deactivate ui
+
+deactivate User
+
+@enduml

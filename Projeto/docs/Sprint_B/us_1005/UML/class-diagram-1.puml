@@ -1,0 +1,52 @@
+@startuml
+
+'Classes
+class SetCourseResponsibleTeacherUI <<presentation>> {
+    doShow()
+}
+
+class Course <<Domain>> {
+    +void setResponsibleTeacher(Teacher theTeacher)
+}
+
+class Teacher <<Domain>> {
+}
+
+class SetCourseResponsibleTeacherController <<Application>> {
+    +Iterable<Course> allCoursesWithoutResponsible()
+    +Iterable<Teacher> allTeachers()
+    +Course setResponsibleTeacher(Course theCourse, Teacher theTeacher)
+}
+
+class ListCourseService <<Application>> {
+    +Iterable<Course> allCoursesWithoutResponsible()
+}
+
+class ListTeacherService <<Application>> {
+    +Iterable<Teacher> allTeachers()
+}
+
+class CourseRepository <<Repositories>> {
+    +Course save(Course theCourse)
+}
+
+class TeacherRepository <<Repositories>> {
+}
+
+'Dependencies
+SetCourseResponsibleTeacherUI -[dashed]-> Course
+ListCourseService -[dashed]-> CourseRepository
+SetCourseResponsibleTeacherUI -[dashed]-> Teacher
+ListTeacherService -[dashed]-> TeacherRepository
+
+
+'Navigation
+SetCourseResponsibleTeacherUI --> SetCourseResponsibleTeacherController : theController
+SetCourseResponsibleTeacherController --> CourseRepository : repo
+SetCourseResponsibleTeacherController --> TeacherRepository : repo
+SetCourseResponsibleTeacherController --> ListCourseService : service
+SetCourseResponsibleTeacherController --> ListTeacherService : service
+SetCourseResponsibleTeacherController --> Course : theCourse
+SetCourseResponsibleTeacherController --> Teacher : theTeacher
+
+@enduml

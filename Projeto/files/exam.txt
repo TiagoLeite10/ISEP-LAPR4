@@ -1,0 +1,83 @@
+Title: Examplae.
+Opening date and time: 10/07/2023 00:00
+Closing date and time: 23/07/2023 23:59
+
+Header:
+Type of feedback: on-submission
+
+Type of grade: on-submission
+
+Description: Scene test exam.
+
+Section:
+Description: I dont know what is going on.
+
+Matching:
+Combine capital with country
+1) Canada - a) Tokyo
+2) Italy - b) Lisbon
+3) Japan - c) Ottawa
+4) France - d) Roma
+5) Portugal - e) Paris
+
+Score per line: 1.0
+Correct answer: 1)-c) 2)-d) 3)-a) 4)-e) 5)-b)
+Feedback: Go to Google
+
+Multiple Choice:
+What is my dog's name?
+a) Bea
+b) Antonio
+c) Luna
+d) Bobi
+
+Score: 3.0
+Correct answer: c
+Feedback: My mom said so.
+
+
+Short Answer:
+What is the 37th element in the periodic table?
+
+Score: 1.0
+Correct answer: Rubidio.
+Feedback: The guy who discovered it said so.
+
+
+Numerical:
+How much is one plus one?
+
+Score: 4.0
+Correct answer: 2.0
+Error: 1.0
+Feedback: Bruh.
+
+Section:
+Description: One thing is one thing, another thing is another thing.
+
+Select Missing Words:
+<option> was the first man on the moon.
+
+Possible choices: Neil Armstrong_Buzz Aldrin_my mom_
+Score: 3.0
+Correct answer: Neil Armstrong
+Feedback: It didn't happen.
+
+
+True/False:
+Sporting is a good club.
+
+Score: 2.0
+Correct answer: false
+Feedback: Common sense.
+
+
+Section:
+Description: Relax it fits.
+
+True/False:
+Is the moon made of cheese?
+
+Score: 2.0
+Correct answer:true
+Feedback: It is tho.

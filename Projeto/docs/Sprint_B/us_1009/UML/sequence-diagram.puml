@@ -1,0 +1,93 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1009
+autonumber
+
+actor Gerente as Actor
+participant ApproveRejectStudentCourseUI as UI <<presentation>>
+control ApproveRejectStudentCourseController as Controller <<application>>
+participant ListCourseService as CourseService <<application>>
+participant ListEnrollementService as EnrollementService <<application>>
+participant "course:Course" as CourseDomain <<domain>>
+participant "enrollement:Enrollement" as EnrollementDomain <<domain>>
+database CourseRepository as CourseRepository <<repository>>
+database EnrollementRepository as EnrollementRepository <<repository>>
+
+activate Actor
+    Actor -> UI : Pede para aceitar/recusar inscrições de uma disciplina
+    activate UI
+        UI -> Controller : create
+        Controller -> CourseService : create
+
+        UI -> Controller : listAllEnrollCourses()
+        activate Controller
+
+        Controller -> CourseService : allEnrollCourses()
+        activate CourseService
+
+        CourseService -> CourseRepository : list = findAllEnrollCourses()
+        activate CourseRepository
+        CourseRepository --> CourseService :
+        deactivate CourseRepository
+        CourseService --> Controller : list
+        deactivate CourseService
+        Controller --> UI : list
+        deactivate Controller
+
+        UI --> Actor : Mostra a lista de disciplinas com incrições abertas
+
+        Actor -> UI : Seleciona a disciplina
+
+        UI -> Controller : listAllPendingEnrollments(courseCode)
+        activate Controller
+
+        Controller -> EnrollementService : allPendingEnrollments(courseCode)
+        activate EnrollementService
+
+        EnrollementService -> EnrollementRepository : list = findAllPendingEnrollments(courseCode)
+        activate EnrollementRepository
+        EnrollementRepository --> EnrollementService :
+        deactivate EnrollementRepository
+        EnrollementService --> Controller : list
+        deactivate EnrollementService
+        Controller --> UI : list
+        deactivate Controller
+
+        UI --> Actor : Mostra a lista de estudantes com inscrição pendente
+
+        Actor -> UI : Seleciona o estudante e aprova/recusa a inscrição
+
+        alt Se o estudante for aprovado
+            UI -> Controller : approvedEnrollment(course, enrollment)
+            activate Controller
+
+            Controller -> CourseDomain : approveCourseEnrollment(enrollment)
+            activate CourseDomain
+            deactivate CourseDomain
+
+            Controller -> CourseRepository : save (course)
+
+            Controller --> UI : course
+            deactivate Controller
+
+        else Se o estudante for rejeitado
+            UI -> Controller : rejectEnrollment(course, enrollment)
+            activate Controller
+
+            Controller -> CourseDomain : rejectCourseEnrollment(enrollment)
+            activate CourseDomain
+            deactivate CourseDomain
+
+            Controller -> CourseRepository : save (course)
+
+            Controller --> UI : course
+            deactivate Controller
+        end
+
+        UI --> Actor : Informa o sucesso da operação
+deactivate Actor
+
+@enduml

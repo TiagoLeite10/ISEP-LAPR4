@@ -1,0 +1,81 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 3004
+autonumber
+
+actor Utilizador as Actor
+participant ShareBoardUI as UI <<presentation>>
+control ShareBoardController as CTRL <<application>>
+participant CsvSharedBoardProtocolProxy as PROXY <<csvprotocol>>
+participant "theBoard:Board" as Board <<domain>>
+database BoardRepository as Repository <<repository>>
+
+activate Actor
+
+Actor -> UI : Pede para partilhar uma board
+activate UI
+
+UI -> CTRL : create
+UI -> CTRL : listAllBoardsOwned()
+activate CTRL
+
+activate CTRL
+    CTRL -> PROXY : getAllBoardsOwned()
+deactivate CTRL
+activate PROXY
+    PROXY -> Repository : findAllBoardsOwned(user)
+deactivate PROXY
+
+UI --> UI : Mostra a lista de board ativas em que o utilizador é dono
+UI --> Actor : Pede para escolher a board a partilhar
+
+Actor -> UI : Escolhe a board a partilhar
+
+UI -> CTRL : listAllUsersAvailableToShare(theBoard)
+
+activate CTRL
+    CTRL -> PROXY : getAllUsersAvailableToShare(title)
+deactivate CTRL
+activate PROXY
+    PROXY -> Repository : findAllUsersAvailableToShare(title)
+deactivate PROXY
+
+UI --> UI : Mostra os utilizadores disponiveis à partilha
+
+Actor -> UI : Escolhe os utilizadores
+
+loop Para cada utilizador escolhido
+
+UI --> Actor : Pede para escolher a permissão de escrita ou leitura
+
+Actor -> UI : Escolhe a permissão do utilizador
+
+end
+
+UI --> UI : Mostra os utilizador convidados
+
+UI --> Actor : Pede confirmação da operação
+
+Actor -> UI : Confirma a operação
+
+UI -> CTRL : shareBoard(theBoard, users)
+activate CTRL
+
+CTRL -> Board : addListMembers(users)
+
+CTRL -> PROXY : saveBoard(theBoard)
+
+activate PROXY
+    PROXY -> Repository : save(theBoard)
+deactivate PROXY
+deactivate CTRL
+
+UI --> Actor : Informa o sucesso da operação
+deactivate UI
+
+deactivate Actor
+
+@enduml

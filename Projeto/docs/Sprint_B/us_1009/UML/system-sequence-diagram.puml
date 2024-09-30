@@ -1,0 +1,31 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 1009
+autonumber
+
+actor "Gerente" as Actor
+participant ":Sistema" as System
+
+activate Actor
+
+Actor -> System : Pede para aceitar/recusar inscrições de uma disciplina
+activate System
+System --> Actor : Mostra a lista de disciplinas com incrições abertas
+deactivate System
+
+Actor -> System : Seleciona a disciplina
+activate System
+System --> Actor : Mostra a lista de estudantes com inscrição pendente
+deactivate System
+
+Actor -> System : Seleciona o estudante e aprova/recusa a inscrição
+activate System
+System --> Actor : Informa o sucesso da operação
+deactivate System
+
+deactivate Actor
+
+@enduml

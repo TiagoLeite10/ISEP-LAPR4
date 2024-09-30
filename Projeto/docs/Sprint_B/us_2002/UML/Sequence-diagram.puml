@@ -1,0 +1,51 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 2002
+
+autonumber
+
+actor Aluno as USR
+participant "<<presentation>> \n ListFutureExamsUI" as UI
+control "<<application>> \n ListFutureExamsController" as CTRL
+participant "<<application>> \n ListExamService" as SERV
+database "<<repository>> \n ExamRepository" as REPO
+participant "<<domain>> \n course: Course" as CRS
+participant "<<domain>> \n exam: Exam" as EXM
+
+activate USR
+
+    USR -> UI : Pede para listar todos os exames futuros
+    activate UI
+
+    UI -> CTRL : create
+
+    CTRL -> SERV : create
+
+    UI -> CTRL : listFutureExams()
+    activate CTRL
+
+    CTRL -> SERV : allFutureExams(student)
+    activate SERV
+
+    SERV -> REPO : list = findAllFutureExams(student)
+    activate REPO
+
+
+    REPO --> SERV :
+    deactivate REPO
+
+    SERV --> CTRL : list
+    deactivate SERV
+
+    CTRL --> UI : list
+    deactivate CTRL
+
+    UI --> USR : Mostra a lista de todos os exames futuros
+    deactivate UI
+
+deactivate USR
+
+@enduml

@@ -1,0 +1,55 @@
+@startuml
+
+'Classes
+class OpenCloseCourseUI <<presentation>> {
+    doShow()
+}
+
+class OpenCloseCourseController <<Application>> {
+    +Iterable<Course> listCloseCourses()
+    +Iterable<Course> listInProgressCourses()
+    +Course openCloseCourse(Course theCourse)
+}
+
+class Course <<Domain>> {
+    +void nextState()
+    -void checkIfCanClose()
+    -boolean hasFutureExams()
+    -boolean hasFutureExtraClass()
+    -boolean hasFutureRecurringClass()
+}
+
+class Exam <<Domain>> <<Value Object>> {
+}
+
+class ExtraClass <<Domain>> <<Value Object>> {
+}
+
+class RecurringClass <<Domain>> <<Value Object>> {
+}
+
+class ListCourseService <<Application>> {
+    +Iterable<Course> allCloseCourses()
+    +Iterable<Course> allInProgressCourses()
+}
+
+class CourseRepository <<Repositories>> {
+    +Course save(Course theCourse)
+}
+
+'Dependencies
+OpenCloseCourseUI -[dashed]-> Course
+ListCourseService -[dashed]-> CourseRepository
+
+'Navigation
+OpenCloseCourseUI --> OpenCloseCourseController : theController
+OpenCloseCourseController --> CourseRepository : repo
+OpenCloseCourseController --> ListCourseService : service
+OpenCloseCourseController --> Course : theCours
+
+Course --> "*" Exam : exams
+Course --> "*" ExtraClass : extraClasses
+Course --> "*" RecurringClass : recurringClasses
+
+
+@enduml

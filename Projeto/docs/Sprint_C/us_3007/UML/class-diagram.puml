@@ -1,0 +1,83 @@
+@startuml
+
+title Class Diagram (CD) - US 3007
+
+'Classes
+class ChangePostItUI <<presentation>> {
+    #boolean doShow()
+}
+
+class JpaBoardRepository <<persistence>> {}
+class InMemoryBoardRepository <<persistence>> {}
+class JpaPostItRepository <<persistence>> {}
+class InMemoryPostItRepository <<persistence>> {}
+
+class Board <<domain>> {
+    -title : String
+    -boardElementLineSet : Set<BoardElementLine>
+    -boardElementColumnSet : Set<BoardElementColumn>
+    -List<PostIt> postIts
+    +changePostIt(oldPostIt : PostIt, content : String)
+    +changePostIt(oldPostIt : PostIt, line : int, column : int)
+    -changePostIt(oldPostIt : PostIt, newPostIt : PostIt)
+    +Set<BoardElementLine> boardElementLine()
+    +Set<BoardElementColumn> boardElementColumn()
+}
+class PostIt <<domain>> {
+    -content : String;
+    -time: PostItTimeStamp;
+    -position : PostItPosition;
+    -type : PostItType;
+    -status: PostItStatus;
+    +void definePreviousPostIt(previousPostIt : PostIt)
+    +void remove()
+    #PostIt clone()
+    +PostIt cloneWithDifferentContent(content : String)
+    +PostIt cloneWithDifferentPosition(line : int, column : int)
+}
+class SystemUser <<domain>> {}
+class Username <<(V, #FF8B40) value object>>
+
+class ChangePostItController <<application>> {
+    +Iterable<Board> listAllBoardsWithPermissionWrite()
+    +Iterable<PostIt> listAllExistingPostIts(theBoard : Board)
+    +Iterable<BoardElementLine> listAllBoardElementLines(theBoard : Board)
+    +Iterable<BoardElementColumn> listAllBoardElementColumns(theBoard : Board)
+    +Board changeContentPostIt(theBoard : Board, thePostIt : PostIt, content: String)
+    +Board changePositionPostIt(theBoard : Board, thePostIt : PostIt, line: int, column : int)
+}
+
+interface BoardRepository <<repositories>> {
+    +Iterable<Board> findAllBoardsWithPermissionWrite(user : Username);
+    +Board save(theBoard : Board)
+}
+
+interface PostItRepository <<repositories>> {
+    +Iterable<PostIt> findAllExistingPostIts(boardTitle : String);
+}
+
+class CsvSharedBoardProtocolProxy <<csvprotocol>> {
+    +Iterable<Board> getAllBoardsWithPermissionWrite()
+    +Iterable<PostIt> getAllExistingPostIts(boardTitle : String)
+    +Board saveBoard(theBoard : Board)
+}
+
+'Navigation
+ChangePostItUI --> ChangePostItController : theController
+ChangePostItController --> CsvSharedBoardProtocolProxy : proxy
+ChangePostItController --> SystemUser : user
+ChangePostItController --> Board : theBoard
+ChangePostItController --> PostIt : thePostIt
+CsvSharedBoardProtocolProxy --> PostItRepository : PostItRepo
+CsvSharedBoardProtocolProxy --> BoardRepository : boardRepo
+SystemUser --> Username
+JpaBoardRepository -> BoardRepository
+InMemoryBoardRepository -> BoardRepository
+JpaPostItRepository -> PostItRepository
+InMemoryPostItRepository -> PostItRepository
+
+'Dependencies
+ChangePostItUI -[dashed]-> SystemUser
+ChangePostItUI -[dashed]-> Board
+
+@enduml

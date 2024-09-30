@@ -1,0 +1,61 @@
+@startuml
+
+title Domain Classes (DC) - US 2002
+
+top to bottom direction
+
+'Course
+package "<<aggregate>> Course" {
+    entity Course <<entity>> <<root>>
+    class CourseTitle <<(V, #FF8B40) value object>>
+    class CourseCode <<(V, #FF8B40) value object>>
+    class CourseDescription <<(V, #FF8B40) value object>>
+    class CourseStatus <<(V, #FF8B40) value object>>
+    class EnrolmentLimits  <<(V, #FF8B40) value object>> {
+        minimumEnrolment
+        maximumEnrolment
+    }
+}
+
+'Exam
+package "<<aggregate>> Exam" {
+    entity Exam <<entity>> <<root>>
+    class ExamTitle <<(V, #FF8B40) value object>>
+    class ExamDescription <<(V, #FF8B40) value object>>
+    class ExamDateTime <<(V, #FF8B40) value object>> {
+        openingDateTime
+        closingDateTime
+    }
+}
+
+'Enrollment
+package "<<aggregate>> Enrollment" {
+    entity Enrollment <<entity>> <<root>>
+    class EnrollmentStatus <<(V, #FF8B40) value object>>
+}
+
+'Student
+package "<<aggregate>> Student" {
+    entity Student <<entity>> <<root>>
+    class MechanographicNumber <<(V, #FF8B40) value object>>
+}
+
+Enrollment -down-> EnrollmentStatus
+
+Student -down-> MechanographicNumber
+
+Course -down-> CourseTitle
+Course -down-> CourseCode
+Course -down-> CourseDescription
+Course -down-> CourseStatus
+Course -down-> EnrolmentLimits
+Course "1" --> "1..*" Exam : has >
+Course "1" --> "0..*" Enrollment : has >
+
+Enrollment "1..*" --> "1" Student : has
+
+Exam -down-> ExamTitle
+Exam -down-> ExamDateTime
+Exam -down-> ExamDescription
+
+@enduml

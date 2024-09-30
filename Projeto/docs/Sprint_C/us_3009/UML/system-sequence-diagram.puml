@@ -1,0 +1,28 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - User Story 3009
+autonumber
+
+actor "Utilizador" as Actor
+participant ":Sistema" as System
+
+activate Actor
+
+Actor -> System : Pede para ver o histórico de atualizações de uma board
+activate System
+
+System --> Actor : Mostra a lista de boards disponíveis
+System --> Actor : Pede para escolher a board
+deactivate System
+
+Actor -> System : Seleciona a board que pretende receber o histórico de atualizações
+activate System
+
+System --> Actor : Mostra o histórico de atualizações da board
+
+deactivate System
+
+@enduml

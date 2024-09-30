@@ -1,0 +1,61 @@
+@startuml
+top to bottom direction
+
+title Domain Classes (DC) - US 2007
+
+hide methods
+skinparam classAttributeIconSize 0
+
+'Teacher
+package "<<aggregate>> Teacher" {
+    entity Teacher <<entity>> <<root>>
+    class Acronym <<(V, #FF8B40) value object>>
+}
+
+'Course
+package "<<aggregate>> Course" {
+    entity Course <<entity>> <<root>>
+    class CourseCode <<(V, #FF8B40) value object>>
+    class CourseStatus <<(V, #FF8B40) value object>>
+}
+
+'Question
+package "<<aggregate>> Question" {
+    'Answer
+    entity Answer <<entity>>> {
+        correctAnswer
+        feedback
+    }
+
+    'Question
+    abstract Question <<abstract>>> {
+        text
+    }
+    class QuestionScore <<(V, #FF8B40) value object>>
+
+    entity Matching <<entity>>>
+    entity MultipleChoice <<entity>>>
+    entity ShortAnswer <<entity>>>
+    entity Numerical <<entity>>>
+    entity SelectMissingWords <<entity>>>
+    entity TrueFalse <<entity>>>
+}
+
+Teacher -down-> Acronym
+
+Course -down-> CourseCode
+Course -down-> CourseStatus
+Course "1" --> "0..*" Question : has >
+
+Question -left-> QuestionScore
+Question "1" --> "1..*" Answer : has >
+Question "0..*" --> "1" Teacher : created by >
+
+Matching -up-|> Question
+MultipleChoice -up-|> Question
+ShortAnswer -up-|> Question
+Numerical -up-|> Question
+SelectMissingWords -up-|> Question
+TrueFalse -up-|> Question
+
+@enduml

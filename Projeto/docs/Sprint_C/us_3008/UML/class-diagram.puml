@@ -1,0 +1,65 @@
+@startuml
+
+title Class Diagram (CD) - US 3008
+
+'Classes
+class UndoLastChangePostItUI <<presentation>> {
+    #boolean doShow()
+}
+
+class Board <<domain>> {
+    +List<PostIt> existingPostIt()
+    +void removePostIt(thePostIt : PostIt)
+}
+
+class PostIt <<domain>> {
+    +PostIt oldPostIt()
+}
+
+class SystemUser <<domain>> {}
+
+class Username <<domain>> {}
+
+class UndoLastChangePostItController <<application>> {
+    +Iterable<Board> listAllBoardsWithPermissionWrite()
+    +Iterable<PostIt> listAllExistingPostIts(theBoard : Board)
+    +PostIt findOldPostIt(postIt : PostIt)
+    +Board removePostIt(thePostIt : PostIt, theBoard : Board)
+}
+
+interface BoardRepository <<repositories>> {
+    +Iterable<Board> findAllBoardsWithPermissionWrite(user : Username);
+    +Board save(theBoard : Board)
+}
+
+interface PostItRepository <<repositories>> {
+    +Iterable<PostIt> findAllExistingPostIts(boardTitle : String);
+}
+
+class JpaBoardRepository <<persistence>> {}
+class InMemoryBoardRepository <<persistence>> {}
+class JpaPostItRepository <<persistence>> {}
+class InMemoryPostItRepository <<persistence>> {}
+
+class CsvSharedBoardProtocolProxy <<csvprotocol>> {
+    +Iterable<Board> getAllBoardsWithPermissionWrite()
+    +Iterable<PostIt> getAllExistingPostIts(boardTitle : String)
+    +Board saveBoard(theBoard : Board)
+}
+
+'Navigation
+UndoLastChangePostItUI --> UndoLastChangePostItController : theController
+UndoLastChangePostItController --> CsvSharedBoardProtocolProxy : proxy
+UndoLastChangePostItController --> Board : theBoard
+UndoLastChangePostItController --> PostIt : thePostIt
+CsvSharedBoardProtocolProxy --> BoardRepository : boardRepo
+CsvSharedBoardProtocolProxy --> PostItRepository : PostItRepo
+
+UndoLastChangePostItController --> SystemUser : user
+SystemUser --> Username
+JpaBoardRepository -> BoardRepository
+InMemoryBoardRepository -> BoardRepository
+JpaPostItRepository -> PostItRepository
+InMemoryPostItRepository -> PostItRepository
+
+@enduml

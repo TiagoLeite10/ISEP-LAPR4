@@ -1,0 +1,36 @@
+@startuml
+title Class Diagram (SSD) - US 1002
+
+class CreateCourseUI <<presentation>> {
+    doShow()
+}
+
+interface RepositoryFactory <<factory>> {}
+class PersistenceContext <<persistence>> {}
+class JpaAutoTxCourseRepository <<persistence>> {}
+class InMemoryCourseRepository <<persistence>> {}
+
+class Course <<Domain>> {}
+
+class CourseController <<Application>> {}
+
+interface UserRepository <<Repositories>> {}
+
+CreateCourseUI --> CourseController : theController
+
+CourseController --> UserRepository : repo
+CourseController --> Course : user
+CourseController -[dashed]-> RepositoryFactory
+CourseController -[dashed]-> PersistenceContext
+
+RepositoryFactory -[dashed]-> UserRepository
+RepositoryFactory -[dashed]-> PersistenceContext
+
+UserRepository -[dashed]-> PersistenceContext
+
+CourseController -[dashed]-> UserRepository
+
+JpaAutoTxCourseRepository -> UserRepository
+InMemoryCourseRepository -> UserRepository
+
+@enduml

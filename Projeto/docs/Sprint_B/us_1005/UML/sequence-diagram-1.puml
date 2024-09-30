@@ -1,0 +1,65 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram 1 (SSD) - US 1005 - Set Responsible Teacher For A Course
+autonumber
+
+actor "Gerente" as Gerente
+participant "<<presentation>> \n SetCourseResponsibleTeacherUI" as ui
+control "<<application>> \n SetCourseResponsibleTeacherController" as controller
+participant "<<application>> \n ListCourseService" as lstCourseService
+participant "<<application>> \n ListTeacherService" as lstTeacherService
+participant "<<domain>> \n theCourse:Course" as course
+participant "<<domain>> \n theTeacher:Teacher" as teacher
+database "<<repository>> \n CourseRepository" as cRepository
+database "<<repository>> \n TeacherRepository" as tRepository
+
+activate Gerente
+    Gerente -> ui : Pede para definir professor responsável para uma disciplina
+    activate ui
+        ui -> controller : create
+        controller -> lstCourseService : create
+        controller -> lstTeacherService : create
+
+        ui -> controller : allCoursesWithoutResponsible = allCoursesWithoutResponsible()
+        activate controller
+            controller -> lstCourseService : allCoursesWithoutResponsible()
+        deactivate controller
+
+        ui -> ui : Mostra todas as disciplinas sem professor responsável
+
+        ui --> Gerente : Pede para escolher uma disciplina
+
+        Gerente -> ui : Escolhe a disciplina
+
+        ui -> controller : allTeachers = allTeachers()
+        activate controller
+            controller -> lstTeacherService : allTeachers()
+        deactivate controller
+
+        ui -> ui : Mostra a lista de professores
+        ui --> Gerente : Pede para escolher um professor
+        Gerente -> ui : Escolhe um professor
+
+        ui -> ui : Mostra a informação a ser tratada
+        ui --> Gerente : Pede confirmação
+
+        Gerente -> ui : Confirma a operação
+
+        ui -> controller : setResponsibleTeacher(theCourse, theTeacher)
+        activate controller
+            controller -> course : setResponsibleTeacher(theTeacher)
+            activate course
+            deactivate course
+            controller -> cRepository : save(theCourse)
+            controller --> ui : theCourse
+        deactivate controller
+
+        ui --> Gerente : Informa o sucesso da operação
+    deactivate ui
+
+deactivate Gerente
+
+@enduml

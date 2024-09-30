@@ -1,0 +1,36 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram 2 (SSD) - US 1005
+autonumber
+
+actor "Gerente" as Gerente
+participant ":Sistema" as Sistema
+
+activate Gerente
+
+    Gerente -> Sistema : Pede para adicionar um professor a uma disciplina
+    activate Sistema
+        Sistema --> Gerente : Mostra a lista de disciplinas e pede para selecionar uma
+    deactivate Sistema
+
+    Gerente -> Sistema : Seleciona uma disciplina
+    activate Sistema
+        Sistema --> Gerente : Mostra a lista de professores e pede para selecionar um
+    deactivate Sistema
+
+    Gerente -> Sistema : Seleciona um professor
+    activate Sistema
+        Sistema --> Gerente : Mostra a informação a ser tratada e pede confirmação
+    deactivate Sistema
+
+    Gerente -> Sistema : Confirma a operação
+    activate Sistema
+        Sistema --> Gerente : Informa o sucesso da operação
+    deactivate Sistema
+
+deactivate Gerente
+
+@enduml

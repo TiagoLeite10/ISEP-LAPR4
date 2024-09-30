@@ -1,0 +1,160 @@
+Matching:
+Combine capital with country
+1) Canada - a) Tokyo
+2) Italy - b) Lisbon
+3) Japan - c) Ottawa
+4) France - d) Roma
+5) Portugal - e) Paris
+
+Score per line: 1.0
+Correct answer: 1)-c) 2)-d) 3)-a) 4)-e) 5)-b)
+Feedback:
+
+Multiple Choice:
+What is the name of my dog?
+a) Bea
+b) Antonio
+c) Luna
+d) Bobi
+e) Relaxa
+
+Score: 3.0
+Correct answer: c
+Feedback:
+
+Short Answer:
+What is the 37th element of the periodic table?
+
+Score: 1.0
+Correct answer: Rubidium.
+Feedback:
+
+Numerical:
+What is one plus one?
+
+Score: 4.0
+Correct answer: 20.0
+Error: 1.0
+Feedback:
+
+Select Missing Words:
+<option> was the first man on the moon.
+Possible choices: Neil Armstrong_Buzz Aldrin_my mom_
+
+Score: 3.0
+Correct answer: Neil Armstrong
+Feedback:
+
+True/False:
+Sporting is a good club.
+
+Score: 4.0
+Correct answer: false
+Feedback:
+
+True/False:
+Is the moon blue?
+
+Score: 4.0
+Correct answer: true
+Feedback:
+
+True/False:
+Is the sky black?
+
+Score: 15.0
+Correct answer: false
+Feedback:
+
+Short Answer:
+Will Benfica be champion today?
+
+Score: 1.0
+Correct answer: Yes.
+Feedback:
+
+Short Answer:
+Who was the first King of Portugal?
+
+Score: 1.0
+Correct answer: Dom Afonso Henriques.
+Feedback:
+
+True/False:
+Whenever Porto plays, there is a penalty.
+
+Score: 15.0
+Correct answer: true
+Feedback:
+
+Short Answer:
+Who is the President of Portugal?
+
+Score: 1.0
+Correct answer: Marcelo Rebelo de Sousa.
+Feedback:
+
+True/False:
+The Programming Languages course is difficult.
+
+Score: 15.0
+Correct answer: true
+Feedback:
+
+Numerical:
+What is 20% of 100%?
+
+Score: 4.0
+Correct answer: 2.0
+Error: 3.0
+Feedback:
+
+Select Missing Words:
+<option> received a golden ball in soccer in the year 2013.
+Possible choices: Paulinho_Gilberto_Cristiano Ronaldo_
+
+Score: 3.0
+Correct answer: Cristiano Ronaldo
+Feedback:
+
+Numerical:
+What is the value of the division between 20 and 4?
+
+Score: 4.0
+Correct answer: 5.0
+Error: 2.0
+Feedback:
+
+Multiple Choice:
+Which sport is played with a ball?
+a) Basketball
+b) Gymnastics
+c) Swimming
+d) Figure Skating
+
+Score: 3.0
+Correct answer: a
+Feedback:
+
+Select Missing Words:
+<option> Portugal became the world champion in futsal in the year.
+Possible choices: 2016_2018_2020_
+
+Score: 7.0
+Correct answer: 2018
+Feedback:
+
+True/False:
+A Programming Language is a formal language whose purpose is to send instructions to the computer.
+
+Score: 15.0
+Correct answer: true
+Feedback:
+
+Select Missing Words:
+<option> of these is a company by Elon Musk.
+Possible choices: Tesla_Apple_Mimosa_
+
+Score: 7.0
+Correct answer: Tesla
+Feedback:

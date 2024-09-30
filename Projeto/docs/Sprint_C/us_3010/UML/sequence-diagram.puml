@@ -1,0 +1,58 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 3010
+autonumber
+
+actor Utilizador as Actor
+participant ArchiveBoardUI as UI <<presentation>>
+control ArchiveBoardController as Controller <<application>>
+participant CsvSharedBoardProtocolProxy as Proxy <<csvprotocol>>
+participant "theBoard:Board" as Domain <<domain>>
+database BoardRepository as Repository <<repository>>
+
+activate Actor
+    Actor -> UI : Pede para arquivar uma board
+    activate UI
+        UI -> Controller : create
+        UI -> Controller : listAllBoardsOwned()
+
+        activate Controller
+            Controller -> Proxy : getAllBoardsOwned()
+        deactivate Controller
+        activate Proxy
+            Proxy -> Repository : findAllBoardsOwned(user)
+        deactivate Proxy
+
+    UI --> UI : Mostra a lista de board ativas em que o utilizador é dono
+
+    UI --> Actor : Pede para escolher a board a arquivar
+
+    Actor -> UI : Escolhe a board a arquivar
+
+    UI --> UI : Mostra os dados da board a arquivar
+
+    UI --> Actor : Pede confirmação da operação
+
+    Actor -> UI : Confirma a operação
+
+        UI -> Controller : archiveBoard(theBoard)
+
+        activate Controller
+            Controller -> Domain : archiveBoard()
+            Controller -> Proxy : saveBoard(theBoard)
+
+            activate Proxy
+                Proxy -> Repository : save(theBoard)
+            deactivate Proxy
+
+            Controller --> UI : theBoard
+        deactivate Controller
+
+    UI --> Actor : Informa o sucesso da operação
+    deactivate UI
+deactivate Actor
+
+@enduml

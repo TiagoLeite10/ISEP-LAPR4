@@ -1,0 +1,92 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1012
+autonumber
+
+actor Professor as Actor
+participant UpdateClassScheduleUI as UI <<presentation>>
+control UpdateClassScheduleController as Controller <<application>>
+participant ListCourseService as CourseService <<application>>
+participant ListRecurringClassService as Service <<application>>
+participant "course:Course" as CourseDomain <<domain>>
+participant "classInstance:ClassInstance" as ClassInstanceDomain <<domain>>
+participant "recurringClass:RecurringClass" as RecurringClassDomain <<domain>>
+database CourseRepository as CourseRepository <<repository>>
+database RecurringClassRepository as Repository <<repository>>
+
+activate Actor
+    Actor -> UI : Pede para atualizar a data e hora de uma aula
+    activate UI
+        UI -> Controller : create
+        Controller -> CourseService : create
+        Controller -> Service : create
+        UI -> Controller : listAllTeacherCoursesNotClosed()
+        activate Controller
+
+        Controller -> CourseService : allTeacherCoursesNotClosed(teacher)
+        activate CourseService
+
+        CourseService -> CourseRepository : list = findAllTeacherCoursesNotClosed(teacher)
+        activate CourseRepository
+
+        CourseRepository --> CourseService :
+        deactivate CourseRepository
+        CourseService --> Controller : list
+        deactivate CourseService
+        Controller --> UI : list
+        deactivate Controller
+
+        UI --> Actor : Mostra a lista de disciplinas que leciona que não se encontram fechadas
+
+        Actor -> UI : Seleciona o curso
+
+        UI -> Controller : listAllTeacherRecurringClass()
+        activate Controller
+
+        Controller -> Service : allTeacherRecurringClass(teacher)
+        activate Service
+
+        Service -> Repository : list = findAllRecurringClass(teacher)
+        activate Repository
+
+        Repository --> Service :
+        deactivate Repository
+        Service --> Controller : list
+        deactivate Service
+        Controller --> UI : list
+        deactivate Controller
+
+        UI --> Actor : Mostra a lista aulas que leciona
+
+        Actor -> UI : Seleciona a aula que pretende
+
+        UI --> Actor : Pede o dia e a hora da nova aula agendada
+
+        Actor -> UI : Escreve a data e hora da aula
+
+
+        UI -> Controller : addClassInstanceToRecurringClass(course, recurringClass, newDateTime)
+        activate Controller
+
+        Controller -> CourseDomain : checkCourseAvailability(newDateTime, recurringClass)
+
+        Controller -> RecurringClassDomain : addClassInstance(classInstance)
+        activate RecurringClassDomain
+        deactivate RecurringClassDomain
+
+        Controller -> CourseRepository : save(course)
+        Controller --> UI : course
+
+        deactivate Controller
+
+        UI --> Actor : Informa o sucesso da operação
+
+deactivate UI
+
+
+deactivate Actor
+
+@enduml

@@ -1,0 +1,31 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 1004 (Option 2)
+autonumber
+
+actor "Gerente" as Gerente
+participant ":Sistema" as Sistema
+
+activate Gerente
+    Gerente -> Sistema : Pede para abrir/fechar uma disciplina
+    activate Sistema
+        Sistema --> Gerente : Mostra informação sobre disciplinas apenas criadas (estado close) e disciplinas em progresso (estado in_progress)
+        Sistema --> Gerente : Pede para escolher a disciplina
+    deactivate Sistema
+
+    Gerente -> Sistema : Escolhe a disciplina que pretende abrir/fechar
+    activate Sistema
+        Sistema --> Gerente : Mostra os dados da disciplina selecionada e pede confirmação da operação a realizar
+    deactivate Sistema
+
+    Gerente -> Sistema : Confirma a operação
+    activate Sistema
+        Sistema --> Gerente : Informa o sucesso da operação
+    deactivate Sistema
+
+deactivate Gerente
+
+@enduml

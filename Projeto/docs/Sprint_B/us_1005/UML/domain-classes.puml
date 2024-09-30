@@ -1,0 +1,40 @@
+@startuml
+
+top to bottom direction
+
+skinparam titleFontSize 25
+title <u>Classes de Domínio para a US 1005</u>
+
+hide methods
+skinparam classAttributeIconSize 0
+
+'Course
+package "<<aggregate>> Course" {
+    entity Course <<entity>> <<root>>
+    class CourseTitle <<(V, #FF8B40) value object>>
+    class CourseCode <<(V, #FF8B40) value object>>
+    class CourseDescription <<(V, #FF8B40) value object>>
+    class CourseStatus <<(V, #FF8B40) value object>>
+    class CourseEnrolmentLimits <<(V, #FF8B40) value object>> {
+        minimumEnrolment
+        maximumEnrolment
+    }
+}
+
+'Teacher
+package "<<aggregate>> Teacher" {
+    entity Teacher <<entity>> <<root>>
+    class Acronym <<(V, #FF8B40) value object>>
+}
+
+Teacher -down-> Acronym
+
+Course -down-> CourseTitle
+Course -down-> CourseCode
+Course -down-> CourseDescription
+Course -down-> CourseStatus
+Course -down-> CourseEnrolmentLimits
+Course "1" --> "1" Teacher : has responsible >
+Course "1..*" --> "1..*" Teacher : is taught >
+
+@enduml

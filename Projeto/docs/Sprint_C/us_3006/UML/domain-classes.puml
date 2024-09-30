@@ -1,0 +1,92 @@
+@startuml
+top to bottom direction
+
+title Domain Classes (DC) - US 3006
+
+hide methods
+skinparam classAttributeIconSize 0
+
+'SystemUser
+package "<<aggregate>> SystemUser" {
+    entity SystemUser <<entity>> <<root>> {}
+    class Username <<(V, #FF8B40) value object>>
+}
+
+'PostIt
+package "<<aggregate>> PostIt" {
+    entity PostIt <<entity>> <<root>> {
+        content
+    }
+    class PostItPosition <<(V, #FF8B40) value object>> {
+        column
+        line
+    }
+
+    class PostItType <<(V, #FF8B40) value object>>
+    class PostItTimeStamp <<(V, #FF8B40) value object>>
+    class PostItStatus <<(V, #FF8B40) value object>>
+    note bottom
+        Diagrama de estados
+        disponível com o
+        nome "post-it-status"
+    end note
+}
+
+'Board
+package "<<aggregate>> Board" {
+    entity Board <<entity>> <<root>> {
+        title
+        archived
+    }
+
+    class BoardCreationDateTime <<(V, #FF8B40) value object>> {
+        dateTime
+    }
+
+    class BoardDimensions <<(V, #FF8B40) value object>> {
+        numColumns
+        numLines
+    }
+
+    'BoardElement
+    abstract BoardElement <<abstract>> {
+        title
+    }
+
+    entity BoardElementLine <<entity>>
+    entity BoardElementColumn <<entity>>
+}
+
+'BoardMembers
+package "<<aggregate>> BoardMembers" {
+    entity BoardMembers <<entity>> <<root>> {
+        joinedDate
+    }
+
+    class AccessPermission <<(V, #FF8B40) value object>>
+}
+
+SystemUser --> Username
+
+PostIt -down-> PostItPosition
+PostIt -down-> PostItType
+PostIt -down-> PostItTimeStamp
+PostIt -down-> PostItStatus
+PostIt "1" --> "1" PostIt : precedes >
+PostIt "0..*" --> "1..*" SystemUser : managed by >
+
+Board -down-> BoardDimensions
+Board -down-> BoardCreationDateTime
+Board "1" --> "1..*" BoardElementLine : has >
+Board "1" --> "1..*" BoardElementColumn : has >
+Board "1" --> "1..*" BoardMembers : has >
+Board "1" --> "0..*" PostIt : has >
+Board "0..*" --> "1" SystemUser : created by >
+
+BoardElementLine -down-|> BoardElement
+BoardElementColumn -down-|> BoardElement
+
+BoardMembers -down-> AccessPermission
+BoardMembers "0..*" --> "1..*" SystemUser : has >
+
+@enduml

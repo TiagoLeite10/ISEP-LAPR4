@@ -1,0 +1,76 @@
+@startuml
+
+top to bottom direction
+
+title Domain Classes (DC) - US 2008
+
+hide methods
+skinparam classAttributeIconSize 0
+
+'Teacher
+package "<<aggregate>> Teacher" {
+    entity Teacher <<entity>> <<root>>
+    class Acronym <<(V, #FF8B40) value object>>
+}
+
+'FormativeExam
+package "<<aggregate>> FormativeExam" {
+    entity FormativeExam <<entity>> <<root>> {
+    }
+
+    entity FormativeExamSection <<entity>> {
+        questionAndRequiredNumber
+    }
+}
+
+class ExamTitle <<(V, #FF8B40) value object>>
+class ExamDateTime <<(V, #FF8B40) value object>> {
+    openingDateTime
+    closingDateTime
+}
+
+'Header
+entity Header <<entity>>>
+class HeaderTypeNote <<(V, #FF8B40) value object>>
+class HeaderTypeFeedback <<(V, #FF8B40) value object>>
+class HeaderDescription <<(V, #FF8B40) value object>>
+
+'Section
+class SectionDescription <<(V, #FF8B40) value object>>
+
+'Course
+package "<<aggregate>> Course" {
+    entity Course <<entity>> <<root>>
+    class CourseCode <<(V, #FF8B40) value object>>
+    class CourseStatus <<(V, #FF8B40) value object>>
+    note bottom
+        Diagrama de estados
+        disponível com o
+        nome "course-status"
+        na documenação da US
+        G002
+    end note
+}
+
+'Value Objects
+Teacher -down-> Acronym
+
+FormativeExam -down-> ExamTitle
+FormativeExam -down-> ExamDateTime
+FormativeExam --> Header
+
+Header -down-> HeaderTypeNote
+Header -down-> HeaderTypeFeedback
+Header -down-> HeaderDescription
+
+FormativeExamSection --> SectionDescription
+
+Course -down-> CourseCode
+Course -down-> CourseStatus
+
+'Relations
+FormativeExam "0..*" --> "1" Teacher : Created by >
+Course "1" --> "0..*" FormativeExam : has >
+FormativeExam "1" --> "1..*" FormativeExamSection : has >
+
+@enduml

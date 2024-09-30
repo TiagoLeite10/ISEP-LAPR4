@@ -1,0 +1,46 @@
+@startuml
+
+title Class Diagram (SSD) - US 4001
+
+'Classes
+class CreateMeetingUI <<presentation>> {
+    doShow()
+}
+
+class JpaMeetingRepository <<persistence>> {}
+class InMemoryMeetingRepository <<persistence>> {}
+
+class JpaUserRepository <<persistence>> {}
+class InMemoryUserRepository <<persistence>> {}
+
+class User <<domain>> {}
+class Meeting <<domain>> {}
+
+class CreateMeetingController <<application>> {}
+class ListMeetingService <<application>>{}
+class UserManagementService <<application>>{}
+
+
+interface MeetingRepository <<repositories>> {}
+interface UserRepository <<repositories>> {}
+
+'Navigation
+CreateMeetingUI --> CreateMeetingController : theController
+CreateMeetingController --> MeetingRepository : repo
+CreateMeetingController --> UserRepository : repo
+CreateMeetingController --> ListMeetingService : service
+CreateMeetingController --> UserManagementService : service
+
+CreateMeetingController --> User : course
+CreateMeetingController --> Meeting : meeting
+JpaMeetingRepository -> MeetingRepository
+InMemoryMeetingRepository -> MeetingRepository
+JpaUserRepository -> UserRepository
+InMemoryUserRepository -> UserRepository
+
+'Dependencies
+CreateMeetingUI -[dashed]-> User
+CreateMeetingUI -[dashed]-> Meeting
+ListMeetingService -[dashed]-> MeetingRepository
+UserManagementService -[dashed]-> UserRepository
+@enduml

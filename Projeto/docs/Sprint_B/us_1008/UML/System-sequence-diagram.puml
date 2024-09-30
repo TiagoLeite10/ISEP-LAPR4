@@ -1,0 +1,27 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 1008
+autonumber
+
+actor "Aluno" as Aluno
+participant ":Sistema" as Sistema
+
+activate Aluno
+
+    Aluno -> Sistema : Pede para inscrever em uma disciplina
+    activate Sistema
+
+    Sistema --> Aluno : Lista as disciplinas que se encontram com inscrições abertas
+    deactivate Sistema
+
+    Aluno -> Sistema : Escolhe a disciplina
+    activate Sistema
+
+    Sistema --> Aluno : Informa o sucesso da operação
+    deactivate Sistema
+
+
+@enduml

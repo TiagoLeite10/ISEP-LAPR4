@@ -1,0 +1,66 @@
+@startuml
+
+top to bottom direction
+title Domain Classes (DC) - US 1011
+
+'Student
+package "<<aggregate>> Student" {
+    entity Student <<entity>> <<root>>
+    class MechanographicNumber <<(V, #FF8B40) value object>>
+}
+
+'Teacher
+package "<<aggregate>> Teacher" {
+    entity Teacher <<entity>> <<root>>
+    class Acronym <<(V, #FF8B40) value object>>
+}
+
+'Course
+package "<<aggregate>> Course" {
+    entity Course <<entity>> <<root>>
+    class CourseTitle <<(V, #FF8B40) value object>>
+    class CourseCode <<(V, #FF8B40) value object>>
+    class CourseDescription <<(V, #FF8B40) value object>>
+    class CourseStatus <<(V, #FF8B40) value object>>
+    class CourseEnrolmentLimits <<(V, #FF8B40) value object>> {
+        minimumEnrolments
+        maximumEnrolments
+    }
+    class CourseDate <<(V, #FF8B40) value object>> {
+        startDate
+        endDate
+    }
+}
+
+'ExtraClass
+package "<<aggregate>> ExtraClass" {
+    entity ExtraClass <<entity>> <<root>>
+}
+
+'Event
+abstract Event <<abstract>>
+class EventDuration <<(V, #FF8B40) value object>>
+class EventDate <<(V, #FF8B40) value object>>
+
+Teacher -down-> Acronym
+
+Student -down-> MechanographicNumber
+
+Course -down-> CourseTitle
+Course -down-> CourseCode
+Course -down-> CourseDescription
+Course -down-> CourseStatus
+Course -down-> CourseEnrolmentLimits
+Course -down-> CourseDate
+Course "1" --> "1" Teacher : has responsible >
+Course "1..*" --> "1..*" Teacher : is taught >
+Course "1" --> "0..*" ExtraClass : has >
+
+ExtraClass --|> Event
+ExtraClass "0..*" --> "1..*" Student : has >
+ExtraClass "0..*" --> "1" Teacher : schedule by >
+
+Event -down-> EventDuration
+Event -down-> EventDate
+
+@enduml

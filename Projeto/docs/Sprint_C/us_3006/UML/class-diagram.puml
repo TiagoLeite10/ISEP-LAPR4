@@ -1,0 +1,85 @@
+@startuml
+
+title Class Diagram (CD) - US 3006
+
+'Classes
+class CreatePostItUI <<presentation>> {
+    #boolean doShow()
+}
+
+class Board <<domain>> {
+    -title : String
+    -archived : boolean
+    -boardCreationDateTime : BoardCreationDateTime
+    -boardDimensions : BoardDimensions
+    -ownerUser: SystemUser;
+    -boardElementLineSet : Set<BoardElementLine>
+    -boardElementColumnSet : Set<BoardElementColumn>
+    -boardMembers : Set<BoardMembers>
+    -postIts : List<PostIt>
+    +void addPostIt(postIt : PostIt)
+    +Set<BoardElementLine> boardElementLine()
+    +Set<BoardElementColumn> boardElementColumn()
+}
+
+class PostIt <<domain>> {
+    -content : String;
+    -time: PostItTimeStamp;
+    -position : PostItPosition;
+    -type : PostItType;
+    -status: PostItStatus;
+    #PostIt(content : String, position : PostItPosition, type : PostItType)
+}
+
+class SystemUser <<domain>> {}
+class Username <<domain>> {}
+
+
+class PostItBuilder <<domain>> {
+    -content : String;
+    -position : PostItPosition;
+    -type : PostItType;
+    +PostItBuilder with(content : String, line : int, column : int, type : PostItType)
+    +PostItBuilder withContent(content : String)
+    +PostItBuilder withPosition(line : int, column : int)
+    +PostItBuilder withType(type : PostItType)
+    +PostItBuilder withCreator(creator : SystemUser)
+    +PostIt build()
+}
+
+class CreatePostItController <<application>> {
+    +Iterable<Board> listAllBoardsWithPermissionWrite()
+    +Iterable<BoardElementLine> listAllBoardElementLines(theBoard : Board)
+    +Iterable<BoardElementColumn> listAllBoardElementColumns(theBoard : Board)
+    +Board createPostIt(theBoard : Board, content : String, line : int, column : int, type : PostItType)
+}
+
+interface BoardRepository <<repositories>> {
+    +Iterable<Board> findAllBoardsWithPermissionWrite(user : Username);
+    +Board save(theBoard : Board)
+}
+
+class JpaBoardRepository <<persistence>> {}
+class InMemoryBoardRepository <<persistence>> {}
+
+class CsvSharedBoardProtocolProxy <<csvprotocol>> {
+    +Iterable<Board> getAllBoardsWithPermissionWrite()
+    +Board saveBoard(theBoard : Board)
+}
+
+'Navigation
+CreatePostItUI --> CreatePostItController : theController
+CreatePostItController --> CsvSharedBoardProtocolProxy : proxy
+CreatePostItController --> Board : theBoard
+CreatePostItController --> PostIt : thePostIt
+CreatePostItController -> PostItBuilder : builder
+CreatePostItController --> SystemUser : user
+CsvSharedBoardProtocolProxy --> BoardRepository : boardRepo
+SystemUser --> Username
+JpaBoardRepository -> BoardRepository
+InMemoryBoardRepository -> BoardRepository
+
+'Dependencies
+PostItBuilder -[dashed]-> PostIt
+
+@enduml

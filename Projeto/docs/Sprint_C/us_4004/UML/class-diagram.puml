@@ -1,0 +1,42 @@
+@startuml
+
+title Class Diagram (CD) - US 4004
+
+'Classes
+class ListParticipationMeetingUI <<presentation>> {
+    doShow()
+}
+
+class JpaMeetingRepository <<persistence>> {}
+class InMemoryMeetingRepository <<persistence>> {}
+
+class Meeting <<domain>> {
+    +Iterable<ParticipationMeeting> allParticipants()
+}
+class SystemUser <<domain>> {}
+class Username <<(V, #FF8B40) value object>>
+
+
+class ListParticipationMeetingController <<application>> {
+    +Iterable<Meeting> listAllMeetings();
+    +void listAllParticipants(Meeting meeting)
+}
+
+interface MeetingRepository <<repositories>> {
+    +Iterable<Meeting> findAllMeetings(Username user)
+}
+
+'Navigation
+ListParticipationMeetingUI --> ListParticipationMeetingController : theController
+ListParticipationMeetingController --> MeetingRepository : repo
+ListParticipationMeetingController --> SystemUser : user
+SystemUser --> Username
+ListParticipationMeetingController --> Meeting : meeting
+JpaMeetingRepository -> MeetingRepository
+InMemoryMeetingRepository -> MeetingRepository
+
+'Dependencies
+ListParticipationMeetingUI -[dashed]-> SystemUser
+ListParticipationMeetingUI -[dashed]-> Meeting
+
+@enduml

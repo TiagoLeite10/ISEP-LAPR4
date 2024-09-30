@@ -1,0 +1,27 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 1002
+autonumber
+
+actor "Gerente" as Gerente
+participant ":Sistema" as Sistema
+
+activate Gerente
+
+    Gerente -> Sistema : pede para criar uma disciplina
+    activate Sistema
+
+    Sistema --> Gerente : pede a informação da disciplina
+    deactivate Sistema
+
+    Gerente -> Sistema : escreve a informação da disciplina (descrição da disciplina, estado da disciplina,\n titulo da disciplina, código da disciplina, inscrições mínimas e máximas )
+    activate Sistema
+
+    Sistema --> Gerente : Informa o sucesso da operação
+    deactivate Sistema
+
+
+@enduml

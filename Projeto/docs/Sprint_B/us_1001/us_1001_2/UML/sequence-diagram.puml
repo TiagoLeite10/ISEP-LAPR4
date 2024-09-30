@@ -1,0 +1,99 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1001_2
+autonumber
+
+actor Gerente as Actor
+participant ActivateDeactivateUserUI as UI <<presentation>>
+control ActivateDeactivateUserController as Controller <<application>>
+participant UserManagementService as Service <<application>>
+participant "user:SystemUser" as Domain <<domain>>
+participant PersistenceContext as Persistence <<persistence>>
+participant RepositoryFactory as Factory <<factory>>
+database UserRepository as Repository <<repository>>
+
+
+activate Actor
+    Actor -> UI : Pede para ativar/desativar um utilizador
+    activate UI
+        UI -> Controller : create
+        Controller -> Service : create
+
+        UI -> Controller : allUsers()
+        activate Controller
+
+        Controller -> Service : allUsers()
+        activate Service
+
+        Service -> Persistence : repositories()
+        activate Persistence
+
+        Persistence -> Factory : create
+        Persistence -> Service : factory
+        deactivate Persistence
+
+        Service -> Factory : users()
+
+        activate Factory
+        Factory -> Repository : create
+
+        deactivate Factory
+
+        Service -> Repository : list = findAll()
+        activate Repository
+
+        Repository --> Service :
+        deactivate Repository
+        Service --> Controller : list
+        deactivate Service
+        Controller --> UI : list
+        deactivate Controller
+
+        UI --> Actor : Mostra a lista de utilizadores do sistema
+
+        Actor -> UI : Seleciona o utilizador
+        alt Se ativar o utilizador
+            UI -> Controller: activateUser(user)
+            activate Controller
+
+            Controller -> Service : activateUser(user)
+            activate Service
+
+            Service -> Domain : activate()
+            activate Domain
+            deactivate Domain
+
+            Service -> Repository : save(user)
+            Service -> Controller : user
+            deactivate Service
+
+            Controller --> UI : user
+            deactivate Controller
+
+        else Se desativar o utilizador
+            UI -> Controller: deactivateUser(user)
+            activate Controller
+
+            Controller -> Service : deactivateUser(user)
+            activate Service
+
+            Service -> Domain : deactivate()
+            activate Domain
+            deactivate Domain
+
+            Service -> Repository : save(user)
+            Service -> Controller : user
+            deactivate Service
+
+            Controller --> UI : user
+            deactivate Controller
+            end
+
+        UI --> Actor : Informa o sucesso da operação
+
+deactivate Actor
+
+@enduml

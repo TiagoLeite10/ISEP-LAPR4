@@ -1,0 +1,20 @@
+Section:
+
+Answer: 1)-c) 2)-d) 3)-a) 4)-e) 5)-b)
+
+Answer: c
+
+Answer: Dirt.
+
+Answer: 1.5
+
+
+Section:
+
+Answer: my mom
+
+Answer: true
+
+Section:
+
+Answer: false

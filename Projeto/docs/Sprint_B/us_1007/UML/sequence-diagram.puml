@@ -1,0 +1,60 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1007
+autonumber
+
+actor "Gerente" as Aluno
+participant "<<presentation>> \n BulkEnrollmentUI" as UI
+control "<<application>> \n BulkEnrollmentController" as Controller
+participant "<<builder>> \n EnrollementBuilder" as Builder
+participant "<<application>> \n ListCourseService" as Service
+participant "<<domain>> \n Course:Course" as CourseDomain
+participant "<<domain>> \n enrollement:Enrollement" as EnrollementDomain
+participant "<<domain>> \n BulkEnrollmentFileCSV" as BEF
+database "<<repository>> \n CourseRepository" as Repository
+
+activate Aluno
+
+    Aluno -> UI : Pede para inscrever alunos, em massa
+    activate UI
+
+    UI -> Controller : create
+
+    Controller -> Service : create
+
+    UI --> Aluno : Pede para introduzir o caminho do csv
+
+    Aluno -> UI : Introduz o caminho do csv
+
+    UI -> Controller : getFileData(filePath)
+    activate Controller
+
+    Controller -> BEF : create
+
+    Controller -> BEF : readFile(filePath)
+
+    deactivate Controller
+
+    UI --> Aluno : Mostra os dados a importar e pede confirmação para os importar
+
+    Aluno -> UI : Confirma a operação
+
+    UI -> Controller : bulkStudentEnrollments(fileData)
+    activate Controller
+
+    Controller -> Service : bulkErollment(fileData)
+
+    Controller -> Repository : saveAll(courses)
+
+    Controller --> UI : enrollment
+    deactivate Controller
+
+    UI --> Aluno : Mostra sucesso da operação
+    deactivate UI
+
+deactivate Aluno
+
+@enduml

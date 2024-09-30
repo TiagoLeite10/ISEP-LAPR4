@@ -1,0 +1,37 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 4003
+autonumber
+
+actor "User" as User
+participant ":Sistema" as Sistema
+
+activate User
+
+    User -> Sistema : Pede para aceitar/recusar um convite recebido para uma meeting
+    activate Sistema
+        Sistema --> User : Mostra a lista de convites recebidos para participar em meetings que ainda não ocorreram
+        Sistema --> User : Pede para escolher um convite recebido para uma meeting
+    deactivate Sistema
+
+    User -> Sistema : Escolhe um convite para uma dada meeting
+    activate Sistema
+        Sistema --> User : Pede para selecionar se pretende aceitar ou recusar o convite
+    deactivate Sistema
+
+    User -> Sistema : Seleciona se pretende aceitar ou recusar o convite
+    activate Sistema
+        Sistema --> User : Mostra os dados da operação a realizar e pede confirmação
+    deactivate Sistema
+
+    User -> Sistema : Confirma a operação
+    activate Sistema
+        Sistema --> User : Informa o sucesso da operação
+    deactivate Sistema
+
+deactivate User
+
+@enduml

@@ -1,0 +1,24 @@
+Title: Example
+Opening date and time: 15/07/2023 00:00
+Closing date and time: 23/07/2023 23:59
+
+Header:
+Type of feedback: none
+Type of grade: on-submission
+Description: Grammar test exam
+
+Section:
+Description: Animals
+Type of questions: <2-Matching> <2-Multiple Choice> <1-True/False>
+
+Section:
+Description: Plants
+Type of questions: <1-Short Answer> <5-Numerical> <2-Multiple Choice>
+
+Section:
+Description: Human Body
+Type of questions: <2-Select Missing Words> <3-Short Answer> <1-Matching>
+
+Section:
+Description: Rocks
+Type of questions: <1-Matching> <8-True/False> <5-Multiple Choice>

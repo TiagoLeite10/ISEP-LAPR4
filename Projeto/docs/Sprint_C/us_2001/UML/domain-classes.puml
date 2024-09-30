@@ -1,0 +1,92 @@
+@startuml
+top to bottom direction
+
+title Domain Classes (DC) - US 2001
+
+hide methods
+skinparam classAttributeIconSize 0
+
+'Course
+package "<<aggregate>> Course" {
+    entity Course <<entity>> <<root>>
+}
+
+'Teacher
+package "<<aggregate>> Teacher" {
+    entity Teacher <<entity>> <<root>>
+    class Acronym <<(V, #FF8B40) value object>>
+}
+
+class ExamTitle <<(V, #FF8B40) value object>>
+class ExamDateTime <<(V, #FF8B40) value object>> {
+    openingDateTime
+    closingDateTime
+}
+
+'Header
+entity Header <<entity>>>
+class HeaderTypeNote <<(V, #FF8B40) value object>>
+class HeaderTypeFeedback <<(V, #FF8B40) value object>>
+class HeaderDescription <<(V, #FF8B40) value object>>
+
+'Section
+class SectionDescription <<(V, #FF8B40) value object>>
+
+'Exam
+package "<<aggregate>> Exam" {
+    entity Exam <<entity>> <<root>>
+
+    entity ExamSection <<entity>>>
+}
+
+'Question
+package "<<aggregate>> Question" {
+    'Answer
+    entity Answer <<entity>>> {
+        correctAnswer
+        feedback
+    }
+
+    'Question
+    abstract Question <<abstract>>> {
+        text
+    }
+    class QuestionScore <<(V, #FF8B40) value object>>
+
+    entity Matching <<entity>>>
+    entity MultipleChoice <<entity>>>
+    entity ShortAnswer <<entity>>>
+    entity Numerical <<entity>>>
+    entity SelectMissingWords <<entity>>>
+    entity TrueFalse <<entity>>>
+}
+
+Teacher -down-> Acronym
+
+Exam -down-> ExamTitle
+Exam -down-> ExamDateTime
+Exam "1" --> "1" Header : has >
+Exam "1" --> "1..*" ExamSection : has >
+Exam "0..*" --> "1" Teacher : created by >
+
+Header -down-> HeaderTypeNote
+Header -down-> HeaderTypeFeedback
+Header -down-> HeaderDescription
+
+ExamSection -down-> SectionDescription
+ExamSection "1" --> "1..*" Question : has >
+
+Question -left-> QuestionScore
+Question "1" --> "1..*" Answer : has >
+
+Matching -up-|> Question
+MultipleChoice -up-|> Question
+ShortAnswer -up-|> Question
+Numerical -up-|> Question
+SelectMissingWords -up-|> Question
+TrueFalse -up-|> Question
+
+Course "1" --> "1..*" Exam : has >
+
+
+@enduml

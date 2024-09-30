@@ -1,0 +1,121 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1011
+autonumber
+
+actor Professor as Actor
+participant CreateExtraClassUI as UI <<presentation>>
+control CreateExtraClassController as Controller <<application>>
+participant ListCourseService as CourseService <<application>>
+participant ListStudentService as StudentService <<application>>
+participant ExtraClassBuilder as Builder <<builder>>
+participant "course:Course" as CourseDomain <<domain>>
+participant "student:Student" as StudentDomain <<domain>>
+participant "extraClass:ExtraClass" as ExtraClassDomain <<domain>>
+database CourseRepository as CourseRepository <<repository>>
+database StudentRepository as StudentRepository <<repository>>
+
+activate Actor
+    Actor -> UI : Pede para agendar uma aula extra
+    activate UI
+        UI -> Controller : create
+        Controller -> CourseService : create
+        UI -> Controller : listAllTeacherCoursesInProgress()
+        activate Controller
+
+        Controller -> CourseService : allTeacherCoursesInProgress(teacher)
+        activate CourseService
+
+        CourseService -> CourseRepository : list = findAllTeacherCoursesInProgress(teacher)
+        activate CourseRepository
+
+        CourseRepository --> CourseService :
+        deactivate CourseRepository
+        CourseService --> Controller : list
+        deactivate CourseService
+        Controller --> UI : list
+        deactivate Controller
+
+        UI --> Actor : Mostra a lista de disciplinas em progresso que leciona
+
+        Actor -> UI : Seleciona a disciplina
+
+        UI --> Actor : Pede informação da aula extra
+
+        Actor -> UI : Escreve a informação da aula extra (data e duração)
+
+        UI -> Controller : listAllApprovedEnrollmentsStudents(courseCode)
+        activate Controller
+
+        Controller -> StudentService : allApprovedEnrollmentsStudents(courseCode)
+        activate StudentService
+
+        StudentService -> StudentRepository : list = findAllApprovedEnrollmentsStudents(courseCode)
+        activate StudentRepository
+
+        StudentRepository --> StudentService :
+        deactivate StudentRepository
+        StudentService --> Controller : list
+        deactivate StudentService
+        Controller --> UI : list
+        deactivate Controller
+
+        UI --> Actor : Mostra a lista dos alunos inscritos na disciplina
+
+        Actor -> UI : Seleciona os alunos
+
+        loop Para cada estudante
+        UI -> Controller : checkStudentsAvailability(startDate, endDate, students)
+
+        activate Controller
+
+        Controller -> CourseService : allApprovedStudentCoursesInProgress
+        activate CourseService
+
+        CourseService -> CourseRepository : list = findAllApprovedStudentCoursesInProgress(student)
+        CourseRepository -> CourseService :
+
+        deactivate CourseService
+
+        loop Para cada curso do estudante
+        Controller -> CourseDomain : checkStudentsAvailability(startDate, endDate, student)
+        deactivate Controller
+        activate CourseDomain
+        end loop
+        deactivate CourseDomain
+        end loop
+        UI --> Actor : Mostra os alunos disponíveis para a aula extra
+
+        Actor -> UI : Confirma a operação
+
+        UI -> Controller : addExtraClassToCourse(course, date, duration, students)
+        activate Controller
+
+        Controller -> Builder : create
+        Controller -> Builder : createExtraClass()
+        activate Builder
+
+        Builder -> ExtraClassDomain : create(date, duration, teacher, students)
+        activate ExtraClassDomain
+        ExtraClassDomain -> Builder : extraClass
+        deactivate ExtraClassDomain
+
+        Builder -> Controller : extraClass
+        deactivate Builder
+
+        Controller -> CourseDomain : addExtraClass(extraClass)
+        activate CourseDomain
+        deactivate CourseDomain
+
+        Controller -> CourseRepository : save(course)
+        Controller --> UI : course
+        deactivate Controller
+
+        UI --> Actor : Informa o sucesso da operação
+    deactivate UI
+deactivate Actor
+
+@enduml

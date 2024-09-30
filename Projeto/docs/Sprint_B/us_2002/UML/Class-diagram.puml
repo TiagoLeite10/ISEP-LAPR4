@@ -1,0 +1,30 @@
+@startuml
+
+title Class Diagram (CD) - US 2002
+
+'Classes
+class ListFutureExamsUI <<presentation>> {
+    doShow()
+}
+
+class ListFutureExamsController <<application>> {}
+class ListExamService <<application>>{}
+
+class Course <<domain>> {}
+class Exam <<domain>> {}
+
+interface ExamRepository <<repositories>> {}
+
+'Navigation
+ListFutureExamsUI --> ListFutureExamsController : theController
+ListFutureExamsController --> ExamRepository : repo
+ListFutureExamsController --> ListExamService : service
+ListFutureExamsController --> Course : course
+ListFutureExamsController --> Exam : exam
+
+'Dependencies
+ListFutureExamsUI -[dashed]-> Course
+ListFutureExamsUI -[dashed]-> Exam
+ListExamService -[dashed]-> ExamRepository
+
+@enduml

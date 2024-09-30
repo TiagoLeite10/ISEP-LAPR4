@@ -1,0 +1,351 @@
+@startuml
+
+top to bottom direction
+
+skinparam titleFontSize 25
+title <u>Domain Model</u>
+
+hide methods
+skinparam classAttributeIconSize 0
+
+'Person
+package "<<aggregate>> Person" {
+    entity Person <<entity>> <<root>>
+    class TaxPayerNumber <<(V, #FF8B40) value object>>
+    class DateBirth <<(V, #FF8B40) value object>>
+}
+
+'Teacher
+package "<<aggregate>> Teacher" {
+    entity Teacher <<entity>> <<root>>
+    class Acronym <<(V, #FF8B40) value object>>
+}
+
+'Student
+package "<<aggregate>> Student" {
+    entity Student <<entity>> <<root>>
+    class MechanographicNumber <<(V, #FF8B40) value object>>
+}
+
+'Manager
+package "<<aggregate>> Manager" {
+    entity Manager <<entity>> <<root>>
+}
+
+'SystemUser
+package "<<aggregate>> SystemUser" {
+    entity SystemUser <<entity>> <<root>> {
+        createdOn
+        active
+        deactivatedOn
+        resetToken
+    }
+    class Name <<(V, #FF8B40) value object>> {
+        fullName
+        shortName
+    }
+    class Username <<(V, #FF8B40) value object>>
+    class EmailAddress <<(V, #FF8B40) value object>>
+    class Password <<(V, #FF8B40) value object>>
+    class RolesSet <<(V, #FF8B40) value object>>
+}
+
+'Invitation
+package "<<aggregate>> Invitation" {
+    entity Invitation <<entity>> <<root>>
+    class Validity <<(V, #FF8B40) value object>> {
+        startDate
+        endDate
+    }
+}
+
+'PostIt
+package "<<aggregate>> PostIt" {
+    entity PostIt <<entity>> <<root>> {
+        content
+    }
+    class PostItPosition <<(V, #FF8B40) value object>> {
+        column
+        line
+    }
+
+    class PostItType <<(V, #FF8B40) value object>>
+    class PostTimeStamp <<(V, #FF8B40) value object>>
+    class PostItStatus <<(V, #FF8B40) value object>>
+    note bottom
+        Diagrama de estados
+        disponível com o
+        nome "post-it-status"
+    end note
+}
+
+'Board
+package "<<aggregate>> Board" {
+    entity Board <<entity>> <<root>> {
+        title
+        archived
+    }
+
+    class BoardCreationDateTime <<(V, #FF8B40) value object>> {
+        dateTime
+    }
+
+    class BoardDimensions <<(V, #FF8B40) value object>> {
+        numColumns
+        numLines
+    }
+
+    'BoardElement
+    abstract BoardElement <<abstract>> {
+        title
+    }
+
+    entity BoardElementLine <<entity>>
+    entity BoardElementColumn <<entity>>
+}
+
+'BoardMembers
+package "<<aggregate>> BoardMembers" {
+    entity BoardMembers <<entity>> <<root>> {
+        joinedDate
+    }
+
+    class AccessPermission <<(V, #FF8B40) value object>>
+}
+
+'Course
+package "<<aggregate>> Course" {
+    entity Course <<entity>> <<root>>
+    class CourseTitle <<(V, #FF8B40) value object>>
+    class CourseCode <<(V, #FF8B40) value object>>
+    class CourseDescription <<(V, #FF8B40) value object>>
+    class CourseStatus <<(V, #FF8B40) value object>>
+    note bottom
+        Diagrama de estados
+        disponível com o
+        nome "course-status"
+    end note
+    class CourseEnrolmentLimits <<(V, #FF8B40) value object>> {
+        minimumEnrolments
+        maximumEnrolments
+    }
+    class CourseDate <<(V, #FF8B40) value object>> {
+        startDate
+        endDate
+    }
+}
+
+'Enrollment
+package "<<aggregate>> Enrollment" {
+    entity Enrollment <<entity>> <<root>>
+    class EnrollmentStatus <<(V, #FF8B40) value object>>
+    note bottom
+        Diagrama de estados
+        disponível com o nome
+        "enrollment-status"
+    end note
+}
+
+'ExtraClass
+package "<<aggregate>> ExtraClass" {
+    entity ExtraClass <<entity>> <<root>>
+}
+
+'RecurringClass
+package "<<aggregate>> RecurringClass" {
+    entity RecurringClass <<entity>> <<root>>
+    class ClassTitle <<(V, #FF8B40) value object>>
+    class ClassDuration <<(V, #FF8B40) value object>>
+    class ClassDayOfTheWeek <<(V, #FF8B40) value object>>
+    class ClassStartTime <<(V, #FF8B40) value object>>
+    entity ClassInstance <<entity>>
+    class ClassInstanceDateTime <<(V, #FF8B40) value object>>{
+        newDateTime
+        previousDateTime
+    }
+}
+
+'Meeting
+package "<<aggregate>> Meeting" {
+    entity Meeting <<entity>> <<root>>
+    entity ParticipationMeeting <<entity>>
+    class ParticipationMeetingStatus <<(V, #FF8B40) value object>>
+    note bottom
+        Diagrama de estados
+        disponível com o nome
+        "participation-meeting-status"
+    end note
+}
+
+'Event
+abstract Event <<abstract>>
+class EventDuration <<(V, #FF8B40) value object>>
+class EventDate <<(V, #FF8B40) value object>>
+
+'TakenExam
+package "<<aggregate>> TakenExam" {
+    entity TakenExam <<entity>> <<root>>
+    entity TakenExamAnswer <<entity>> {
+        answerValue
+    }
+    class Grade <<(V, #FF8B40) value object>>
+}
+
+'Exam
+package "<<aggregate>> Exam" {
+    entity Exam <<entity>> <<root>>
+    class ExamTitle <<(V, #FF8B40) value object>>
+    class ExamDescription <<(V, #FF8B40) value object>>
+    class ExamDateTime <<(V, #FF8B40) value object>> {
+        openingDateTime
+        closingDateTime
+    }
+
+    'Header
+    entity Header <<entity>>>
+    class TypeNote <<(V, #FF8B40) value object>>
+    class TypeFeedback <<(V, #FF8B40) value object>>
+    class HeaderDescription <<(V, #FF8B40) value object>>
+
+    'Section
+    entity Section <<entity>>>
+    class SectionTitle <<(V, #FF8B40) value object>>
+    class SectionDescription <<(V, #FF8B40) value object>>
+
+    'Answer
+    entity Answer <<entity>>> {
+        text
+        value
+        rigthAnswer
+        feedback
+    }
+    class AnswerWeight <<(V, #FF8B40) value object>>
+
+    'Question
+    abstract Question <<abstract>>> {
+        text
+    }
+    entity Matching <<entity>>>
+    entity MultipleChoice <<entity>>>
+    entity ShortAnswer <<entity>>>
+    entity Numerical <<entity>>>
+    entity SelectMissingWords <<entity>>>
+    entity TrueFalse <<entity>>>
+}
+
+Person -down-> TaxPayerNumber
+Person -down-> DateBirth
+Person "1" --> "1" SystemUser : is >
+
+Teacher -down-> Acronym
+Teacher "1" --> "1" Person : is >
+
+Student -down-> MechanographicNumber
+Student "1" --> "1" Person : is >
+
+Manager "1" --> "1" SystemUser : is >
+
+SystemUser -down-> Name
+SystemUser -down-> Username
+SystemUser -down-> EmailAddress
+SystemUser -down-> Password
+SystemUser -down-> RolesSet
+
+Invitation -down-> Validity
+Invitation "0..*" --> "1" SystemUser : has >
+
+PostIt -down-> PostItPosition
+PostIt -down-> PostItType
+PostIt -down-> PostTimeStamp
+PostIt -down-> PostItStatus
+PostIt "1" --> "1" PostIt : precedes >
+PostIt "0..*" --> "1..*" SystemUser : managed by >
+
+Board -down-> BoardDimensions
+Board -down-> BoardCreationDateTime
+Board "1" --> "1..*" BoardElement : has >
+Board "1" --> "1..*" BoardMembers : has >
+Board "1" --> "0..*" PostIt : has >
+Board "1" --> "0..*" Invitation : for >
+Board "0..*" --> "1" SystemUser : created by >
+
+BoardElementLine --|> BoardElement
+BoardElementColumn --|> BoardElement
+
+BoardMembers -down-> AccessPermission
+BoardMembers "0..*" --> "1..*" SystemUser : has >
+
+Course -down-> CourseTitle
+Course -down-> CourseCode
+Course -down-> CourseDescription
+Course -down-> CourseStatus
+Course -down-> CourseEnrolmentLimits
+Course -down-> CourseDate
+Course "1" --> "0..*" ExtraClass : has >
+Course "1" --> "1..*" RecurringClass : has >
+Course "1" --> "1..*" Exam : has >
+Course "1" --> "1" Teacher : has responsible >
+Course "1..*" --> "1..*" Teacher : is taught >
+Course "0..*" --> "1..*" Manager : is managed by >
+Course "1" --> "0..*" Enrollment : has >
+
+Enrollment -down-> EnrollmentStatus
+Enrollment "1..*" --> "1" Student : has >
+
+ExtraClass --|> Event
+ExtraClass "0..*" --> "1..*" Student : has >
+ExtraClass "0..*" --> "1" Teacher : schedule by >
+
+RecurringClass -down-> ClassTitle
+RecurringClass -down-> ClassDuration
+RecurringClass -down-> ClassDayOfTheWeek
+RecurringClass -down-> ClassStartTime
+RecurringClass "1..*" --> "1" Teacher : schedule by >
+RecurringClass "1" --> "0..*" ClassInstance : reschedule >
+
+ClassInstance -down-> ClassInstanceDateTime
+
+Meeting --|> Event
+Meeting "1" --> "1..*" ParticipationMeeting : creates >
+Meeting "0..*" --> "1" SystemUser : managed by >
+
+ParticipationMeeting -down-> ParticipationMeetingStatus
+ParticipationMeeting "0..*" --> "1..*" SystemUser : has >
+
+Event -down-> EventDuration
+Event -down-> EventDate
+
+TakenExam "0..*" --> "1" Student : taken by >
+TakenExam "0..*" --> "1" Exam : is >
+TakenExam "1" --> "1..*" TakenExamAnswer : has >
+
+TakenExamAnswer -down-> Grade
+TakenExamAnswer "0..*" --> "1" Question : has >
+
+Exam -down-> ExamTitle
+Exam -down-> ExamDateTime
+Exam -down-> ExamDescription
+Exam "1" --> "1" Header : has >
+Exam "1" --> "1..*" Section : has >
+Exam "0..*" --> "1" Teacher : created by >
+
+Header -down-> TypeNote
+Header -down-> TypeFeedback
+Header -down-> HeaderDescription
+
+Section -down-> SectionDescription
+Section -down-> SectionTitle
+Section "1" --> "1..*" Question : has >
+
+Question "1" --> "1..*" Answer : has >
+
+Matching -up-|> Question
+MultipleChoice -up-|> Question
+ShortAnswer -up-|> Question
+Numerical -up-|> Question
+SelectMissingWords -up-|> Question
+TrueFalse -up-|> Question
+
+Answer -left-> AnswerWeight
+
+@enduml

@@ -1,0 +1,43 @@
+@startuml
+
+title Class Diagram (CD) - US 4002
+
+'Classes
+class CancelMeetingUI <<presentation>> {
+    #boolean doShow()
+}
+
+class JpaMeetingRepository <<persistence>> {}
+class InMemoryMeetingRepository <<persistence>> {}
+
+class Meeting <<domain>> {
+    +void cancelMeeting()
+}
+class SystemUser <<domain>> {}
+class Username <<(V, #FF8B40) value object>>
+
+
+class CancelMeetingController <<application>> {
+    +Iterable<Meeting> listAllMeetingsToBeHeld();
+    +void cancelMeeting(meeting : Meeting)
+}
+
+interface MeetingRepository <<repositories>> {
+    +Iterable<Meeting> findAllMeetingsToBeHeld(user: Username)
+    +Meeting save(meeting : Meeting)
+}
+
+'Navigation
+CancelMeetingUI --> CancelMeetingController : theController
+CancelMeetingController --> MeetingRepository : repo
+CancelMeetingController --> SystemUser : user
+SystemUser --> Username
+CancelMeetingController --> Meeting : meeting
+JpaMeetingRepository -> MeetingRepository
+InMemoryMeetingRepository -> MeetingRepository
+
+'Dependencies
+CancelMeetingUI -[dashed]-> SystemUser
+CancelMeetingUI -[dashed]-> Meeting
+
+@enduml

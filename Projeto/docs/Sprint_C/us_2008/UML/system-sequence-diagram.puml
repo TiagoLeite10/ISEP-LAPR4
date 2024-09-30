@@ -1,0 +1,36 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 2008
+autonumber
+
+actor "Professor" as Teacher
+participant ":Sistema" as Sistema
+
+activate Teacher
+
+    Teacher -> Sistema : Pede para criar/atualizar um exame formativo automático
+    activate Sistema
+        Sistema --> Teacher : Mostra a lista de disciplinas disponíveis (no estado in_progress) e que são lecionadas pelo próprio professor
+        Sistema --> Teacher : Pede para escolher uma disciplina
+    deactivate Sistema
+
+    Teacher -> Sistema : Escolhe uma disciplina
+    activate Sistema
+        Sistema --> Teacher : Pede para inserir o caminho até ao ficheiro com a informação do exame formativo a criar
+    deactivate Sistema
+
+    Teacher -> Sistema : Insere o caminho até ao ficheiro
+    activate Sistema
+        Sistema --> Teacher : Mostra o conteúdo a ser guardado do ficheiro e pede confirmação
+    deactivate Sistema
+
+    Teacher -> Sistema : Confirma a operação
+    activate Sistema
+        Sistema --> Teacher : Informa o sucesso da operação
+    deactivate Sistema
+deactivate Teacher
+
+@enduml

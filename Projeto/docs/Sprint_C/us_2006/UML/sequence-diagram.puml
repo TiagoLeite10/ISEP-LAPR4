@@ -1,0 +1,60 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 2006
+autonumber
+
+actor Professor as Actor
+participant ListGradesByCourseUI as UI <<presentation>>
+control ListGradesByCourseController as CTRL <<application>>
+participant "<<domain>> \n course: Course" as CRS
+participant "takenExam:TakenExam" as TKNEX <<domain>>
+database "<<repository>> \n CourseRepository" as CREPO
+database TakenExamRepository as TEREPO <<repository>>
+
+activate Actor
+
+        Actor -> UI : Pede para listar as notas por cursos
+        activate UI
+
+        UI -> CTRL : create
+
+        UI -> CTRL : listAllTeacherCourses()
+        activate CTRL
+
+
+
+        CTRL -> CREPO : list = findAllTeacherCourses(teacher)
+        activate CREPO
+
+        CREPO --> CTRL : list
+        deactivate CREPO
+
+
+        CTRL --> UI : list
+        deactivate CTRL
+
+        UI --> Actor : Mostra os cursos que ensina e pede para escolher um curso
+
+        Actor -> UI : Escolhe o curso
+
+        UI -> CTRL : listAllGradesByCourse()
+        activate CTRL
+
+        CTRL -> TEREPO : list = findAllGradesByCourse(course)
+        activate TEREPO
+
+        TEREPO --> CTRL : list
+        deactivate TEREPO
+
+        CTRL --> UI : list
+        deactivate CTRL
+
+        UI --> Actor : Mostra as notas desse curso
+        deactivate UI
+
+deactivate Actor
+
+@enduml

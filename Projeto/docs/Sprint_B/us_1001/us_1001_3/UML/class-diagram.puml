@@ -1,0 +1,43 @@
+@startuml
+
+title Class Diagram (CD) - US 1001_3
+
+class ListUserUI <<presentation>> {
+    doShow()
+}
+
+interface RepositoryFactory <<factory>> {}
+class PersistenceContext <<persistence>> {}
+class JpaAutoTxUserRepository <<persistence>> {}
+class InMemoryUserRepository <<persistence>> {}
+
+class SystemUser <<Domain>> {}
+
+class ListUsersController <<Application>> {
+    +Iterable<SystemUser> listAllUsers()
+}
+class UserManagementService <<Application>> {
+    +Iterable<SystemUser> allUsers()
+}
+
+interface UserRepository <<Repositories>> {
+    +Iterable<SystemUser> findAll()
+}
+
+'Navigation
+ListUserUI --> ListUsersController : theController
+ListUsersController --> UserRepository : repo
+ListUsersController --> UserManagementService : service
+ListUsersController --> SystemUser : user
+JpaAutoTxUserRepository -> UserRepository
+InMemoryUserRepository -> UserRepository
+
+'Dependencies
+ListUsersController -[dashed]-> RepositoryFactory
+ListUsersController -[dashed]-> PersistenceContext
+RepositoryFactory -[dashed]-> UserRepository
+RepositoryFactory -[dashed]-> PersistenceContext
+UserRepository -[dashed]-> PersistenceContext
+UserManagementService -[dashed]-> UserRepository
+
+@enduml

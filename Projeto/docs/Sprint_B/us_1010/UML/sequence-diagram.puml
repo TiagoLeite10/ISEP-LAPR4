@@ -1,0 +1,85 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1010
+autonumber
+
+actor Professor as Actor
+participant CreateRecurringClassUI as UI <<presentation>>
+control CreateRecurringClassController as Controller <<application>>
+participant RecurringClassBuilder as Builder <<builder>>
+participant ListCourseService as Service <<application>>
+participant "course:Course" as CourseDomain <<domain>>
+participant "recurringClass:RecurringClass" as RecurringClassDomain <<domain>>
+database CourseRepository as Repository <<repository>>
+
+activate Actor
+    Actor -> UI : Pede para agendar uma aula
+    activate UI
+        UI -> Controller : create
+        Controller -> Service : create
+        UI -> Controller : listAllTeacherCoursesNotClosed()
+        activate Controller
+
+        Controller -> Service : allTeacherCoursesNotClosed(teacher)
+        activate Service
+
+        Service -> Repository : list = findAllTeacherCoursesNotClosed(teacher)
+        activate Repository
+
+        Repository --> Service :
+        deactivate Repository
+        Service --> Controller : list
+        deactivate Service
+        Controller --> UI : list
+        deactivate Controller
+
+        UI --> Actor : Mostra a lista de disciplinas que leciona que não se encontram fechadas
+
+        Actor -> UI : Seleciona o curso
+
+        UI --> Actor : Pede a informação
+
+        Actor -> UI : Escreve a informação da aula (título, hora de começo, \n duração e dia da semana)
+
+        UI -> Controller : addRecurringClassToCourse(course, classTitle, classStartTime, \n classDuration e classDayOfTheWeek)
+        activate Controller
+        Controller -> Builder : create
+
+        Controller -> Builder : createRecurringClass()
+
+        activate Builder
+
+        Builder -> RecurringClassDomain  : createRecurringClass(durationOfClass, classDayOfTheWeek, \n classStartTime, classTitle, teacher)
+        activate RecurringClassDomain
+
+        RecurringClassDomain --> Builder  : recurringClass
+
+        deactivate RecurringClassDomain
+
+        Builder -> Controller : recurringClass
+        deactivate Builder
+
+        Controller -> CourseDomain : checkCourseAvailability()
+        activate CourseDomain
+        deactivate CourseDomain
+
+        Controller -> CourseDomain : addRecurringClass(recurringClass)
+        activate CourseDomain
+        deactivate CourseDomain
+
+        Controller -> Repository : save(course)
+        Controller --> UI : course
+
+        deactivate Controller
+
+        UI --> Actor : Informa o sucesso da operação
+
+deactivate UI
+
+
+deactivate Actor
+
+@enduml

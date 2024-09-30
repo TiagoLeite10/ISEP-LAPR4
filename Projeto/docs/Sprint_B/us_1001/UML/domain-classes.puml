@@ -1,0 +1,65 @@
+@startuml
+
+top to bottom direction
+
+'Person
+package "<<aggregate>> Person" {
+    entity Person <<entity>> <<root>>
+    class TaxPayerNumber <<(V, #FF8B40) value object>>
+    class DateBirth <<(V, #FF8B40) value object>>
+}
+
+'Teacher
+package "<<aggregate>> Teacher" {
+    entity Teacher <<entity>> <<root>>
+    class Acronym <<(V, #FF8B40) value object>>
+}
+
+'Student
+package "<<aggregate>> Student" {
+    entity Student <<entity>> <<root>>
+    class MechanographicNumber <<(V, #FF8B40) value object>>
+}
+
+'Manager
+package "<<aggregate>> Manager" {
+    entity Manager <<entity>> <<root>>
+}
+
+'SystemUser
+package "<<aggregate>> SystemUser" {
+    entity SystemUser <<entity>> <<root>> {
+        createdOn
+        active
+        deactivatedOn
+        resetToken
+    }
+    class Name <<(V, #FF8B40) value object>> {
+        fullName
+        shortName
+    }
+    class Username <<(V, #FF8B40) value object>>
+    class EmailAddress <<(V, #FF8B40) value object>>
+    class Password <<(V, #FF8B40) value object>>
+    class RolesSet <<(V, #FF8B40) value object>>
+}
+
+Person -down-> TaxPayerNumber
+Person -down-> DateBirth
+Person "1" --> "1" SystemUser : is >
+
+Teacher -down-> Acronym
+Teacher "1" --> "1" Person : is >
+
+Student -down-> MechanographicNumber
+Student "1" --> "1" Person : is >
+
+Manager "1" --> "1" SystemUser : is >
+
+SystemUser -down-> Name
+SystemUser -down-> Username
+SystemUser -down-> EmailAddress
+SystemUser -down-> Password
+SystemUser -down-> RolesSet
+
+@enduml

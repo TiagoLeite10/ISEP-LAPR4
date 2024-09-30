@@ -1,0 +1,54 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 4002
+autonumber
+
+actor Utilizador as Actor
+participant CancelMeetingUI as UI <<presentation>>
+control CancelMeetingController as Controller <<application>>
+participant "user:SystemUser" as UserDomain <<domain>>
+participant "meeting:Meeting" as MeetingDomain <<domain>>
+database MeetingRepository as Repository <<repository>>
+
+activate Actor
+    Actor -> UI : Pede para cancelar uma reunião
+    activate UI
+        UI -> Controller : create
+        UI -> Controller : listAllMeetingsToBeHeld()
+        activate Controller
+
+        Controller -> Repository : list = findAllMeetingsToBeHeld(user)
+        activate Repository
+
+        Repository --> Controller :
+        deactivate Repository
+        Controller --> UI : list
+        deactivate Controller
+
+    UI --> Actor : Mostra a lista de reuniões por realizar
+
+    Actor -> UI : Seleciona a reunião a cancelar
+
+    UI --> Actor : Mostra os dados da reunião selecionada e pede confirmação da operação a realizar
+
+    Actor -> UI : Confirma a operação
+
+        UI -> Controller : cancelMeeting(meeting)
+        activate Controller
+
+        Controller -> MeetingDomain : cancelMeeting()
+        activate MeetingDomain
+        deactivate MeetingDomain
+
+        Controller -> Repository : save(meeting)
+        Controller --> UI : meeting
+        deactivate Controller
+
+    UI --> Actor : Informa o sucesso da operação
+    deactivate UI
+deactivate Actor
+
+@enduml

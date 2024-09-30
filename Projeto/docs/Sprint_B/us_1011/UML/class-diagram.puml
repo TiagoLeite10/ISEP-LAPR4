@@ -1,0 +1,69 @@
+@startuml
+
+title Class Diagram (CD) - US 1011
+
+'Classes
+class CreateExtraClassUI <<presentation>> {
+    doShow()
+}
+
+class JpaCourseRepository <<persistence>> {}
+class InMemoryCourseRepository <<persistence>> {}
+class JpaStudentRepository <<persistence>> {}
+class InMemoryStudentRepository <<persistence>> {}
+
+class Course <<domain>> {
+    +checkStudentsAvailability(Course course, Iterable<Student> students)
+    +addExtraClass(ExtraClass extraClass)
+}
+class CourseCode <<(V, #FF8B40) value object>>
+class Teacher <<domain>> {}
+class Student <<domain>> {}
+class ExtraClass <<domain>> {}
+
+class CreateExtraClassController <<application>> {
+    +Iterable<Course> listAllTeacherCoursesInProgress()
+    +Iterable<Student> listAllApprovedEnrollmentsStudents(courseCode)
+    +Course addExtraClassToCourse(Course course, Calendar date, int duration, Iterable<Student> students)
+}
+
+class ListCourseService <<application>>{
+    +Iterable<Course> allTeacherCoursesInProgress(Teacher teacher)
+}
+class ListStudentService <<application>>{
+    +Iterable<Student> allApprovedEnrollmentsStudents(CourseCode courseCode)
+}
+
+interface CourseRepository <<repositories>> {
+    +Iterable<Course> findAllTeacherCoursesInProgress(Teacher teacher)
+    +Course save(Course course)
+}
+interface StudentRepository <<repositories>> {
+    +Iterable<Student> findAllApprovedEnrollmentsStudents(Course courseCode)
+}
+
+'Navigation
+CreateExtraClassUI --> CreateExtraClassController : theController
+CreateExtraClassController --> CourseRepository : repo
+CreateExtraClassController --> StudentRepository : repo
+CreateExtraClassController --> ListCourseService : service
+CreateExtraClassController --> ListStudentService : service
+CreateExtraClassController --> Course : course
+CreateExtraClassController --> Student : student
+CreateExtraClassController --> Teacher : teacher
+CreateExtraClassController --> ExtraClass : extraClass
+Course --> CourseCode : courseCode
+JpaCourseRepository -> CourseRepository
+InMemoryCourseRepository -> CourseRepository
+JpaStudentRepository -> StudentRepository
+InMemoryStudentRepository -> StudentRepository
+
+'Dependencies
+CreateExtraClassUI -[dashed]-> Course
+CreateExtraClassUI -[dashed]-> Student
+CreateExtraClassUI -[dashed]-> Teacher
+CreateExtraClassUI -[dashed]-> ExtraClass
+ListCourseService -[dashed]-> CourseRepository
+ListStudentService -[dashed]-> StudentRepository
+
+@enduml

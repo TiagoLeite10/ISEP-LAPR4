@@ -1,0 +1,87 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 2001
+autonumber
+
+actor Professor as Actor
+participant AddExamUI as UI <<presentation>>
+control AddExamController as CTRL <<application>>
+participant Exam as Main <<lprog>>
+participant ExamLexer as Lexer <<lprog>>
+participant CommonTokenStream as Stream <<lprog>>
+participant ExamParser as Parser <<lprog>>
+participant ParseTree as Tree <<lprog>>
+participant EvalVisitor as Visitor <<lprog>>
+participant Course as C <<domain>>
+participant Exam as E <<domain>>
+database CourseRepository as CREPO <<repository>>
+
+activate Actor
+
+Actor -> UI : Pede para adicionar/atualizar exame a um repositório
+activate UI
+
+UI -> CTRL : create
+
+
+UI -> CTRL : listAllTeacherCoursesInProgress()
+activate CTRL
+
+CTRL -> CREPO : list = findAllTeacherCoursesInProgress(teacher)
+activate CREPO
+
+CREPO --> CTRL : list
+deactivate CREPO
+
+CTRL --> UI : list
+deactivate CTRL
+
+UI --> Actor : Mostra os cursos que leciona e em progresso e pede para escolher um curso
+
+Actor -> UI : Escolhe o curso a que quer adicionar o exame
+
+UI --> Actor : Pede para introduzir o caminho do ficheiro
+
+Actor -> UI : Introduz o caminho do ficheiro
+
+UI -> CTRL : getExam(filePath)
+activate CTRL
+
+CTRL -> Main : parseWithVisitor(filePath)
+activate Main
+
+Main -> Visitor : visit(tree)
+activate Visitor
+
+Main -> Visitor : getExam()
+
+Visitor --> Main : exam
+deactivate Visitor
+
+Main --> CTRL : exam
+deactivate Main
+
+CTRL --> UI : exam
+deactivate CTRL
+
+UI --> Actor : Mostra os dados das questões e pede confirmação para as adicionar/atualizar
+
+Actor -> UI : Confirma a operação
+
+UI -> CTRL : addExam(course, exam)
+activate CTRL
+
+CTRL -> CREPO : save(course)
+
+CTRL --> UI : exam
+deactivate CTRL
+
+UI --> Actor : Informa o sucesso da operação
+deactivate UI
+
+deactivate Actor
+
+@enduml

@@ -1,0 +1,48 @@
+@startuml
+
+title Class Diagram (CD) - US 3009
+
+'Classes
+class ViewBoardUpdatesHistoryUI <<presentation>> {
+    doShow()
+}
+
+class JpaBoardRepository <<persistence>> {}
+class InMemoryBoardRepository <<persistence>> {}
+
+class Board <<domain>> {
+}
+
+class SystemUser <<domain>> {}
+class Username <<(V, #FF8B40) value object>>
+
+class ViewBoardUpdatesHistoryController <<application>> {
+    +Iterable<Board> listAllBoards();
+    +void viewBoard(theBoard :Board)
+}
+
+interface BoardRepository <<repositories>> {
+    +Iterable<Board> findAllBoards(user : Username);
+    +Board findBoardWithBoardMembersAndPostIts(boardTitle : String)
+}
+
+class CsvSharedBoardProtocolProxy <<csvprotocol>> {
+    +Iterable<Board> getAllBoardsOfAUser()
+    +String viewBoardUpdatesHistory(boardTitle : String)
+}
+
+'Navigation
+ViewBoardUpdatesHistoryUI --> ViewBoardUpdatesHistoryController : theController
+ViewBoardUpdatesHistoryController --> CsvSharedBoardProtocolProxy : proxy
+ViewBoardUpdatesHistoryController --> SystemUser : user
+ViewBoardUpdatesHistoryController --> Board : theBoard
+CsvSharedBoardProtocolProxy --> BoardRepository : boardRepo
+SystemUser --> Username
+JpaBoardRepository -> BoardRepository
+InMemoryBoardRepository -> BoardRepository
+
+'Dependencies
+ViewBoardUpdatesHistoryUI -[dashed]-> SystemUser
+ViewBoardUpdatesHistoryUI -[dashed]-> Board
+
+@enduml

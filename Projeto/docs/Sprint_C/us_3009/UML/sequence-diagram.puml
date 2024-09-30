@@ -1,0 +1,56 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 3009
+autonumber
+
+actor Utilizador as Actor
+participant ViewBoardUpdatesHistoryUI as UI <<presentation>>
+control ViewBoardUpdatesHistoryController as Controller <<application>>
+participant CsvSharedBoardProtocolProxy as Proxy <<csvprotocol>>
+participant "thePostIt:PostIt" as PostItDomain <<domain>>
+participant "theBoard:Board" as BoardDomain <<domain>>
+database BoardRepository as Repository <<repository>>
+
+activate Actor
+    Actor -> UI : Pede para ver o histórico de atualizações de uma board
+    activate UI
+        UI -> Controller : create
+        UI -> Controller : allBoards = listAllBoards()
+
+        activate Controller
+            Controller -> Proxy : getAllBoardsOfAUSer()
+        deactivate Controller
+        activate Proxy
+            Proxy -> Repository : findAllBoards(username)
+        deactivate Proxy
+
+    UI -> UI : Mostra a lista de boards disponíveis
+
+    UI --> Actor : Pede para escolher a board
+
+        deactivate Controller
+
+    Actor -> UI : Seleciona a board que pretende receber o histórico de atualizações
+
+    UI -> Controller : boardUpdateHistoryData = showBoardUpdatesHistory(theBoard)
+        activate Controller
+        Controller -> Proxy : viewBoardUpdatesHistory(boardTitle)
+
+        activate Proxy
+        Proxy -> Repository : theBoard = findBoardWithBoardMembersAndPostIts(boardTitle)
+        Proxy -> BoardDomain : boardCreationData()
+        Proxy -> BoardDomain : membersHistory()
+        Proxy -> BoardDomain : postItsHistory()
+        Proxy --> Controller : responseText
+        deactivate Proxy
+        Controller --> UI : responseText
+        deactivate Controller
+
+    UI --> Actor : Mostra o histórico de atualizações da board
+    deactivate UI
+deactivate Actor
+
+@enduml

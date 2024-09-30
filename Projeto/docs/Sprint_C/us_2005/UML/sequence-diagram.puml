@@ -1,0 +1,35 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1009
+autonumber
+
+actor Aluno as Actor
+participant ListGradesUI as UI <<presentation>>
+control ListGradesController as Controller <<application>>
+participant "takenExam:TakenExam" as TakenExamDomain <<domain>>
+database TakenExamRepository as TakenExamExamRepository <<repository>>
+activate Actor
+    Actor -> UI : Pede para listar as notas
+    activate UI
+        UI -> Controller : create
+        activate Controller
+deactivate Controller
+        UI -> Controller : listAllGrades()
+        activate Controller
+
+
+        Controller -> TakenExamExamRepository : list = findAllGrades(student)
+        activate TakenExamExamRepository
+
+        deactivate TakenExamExamRepository
+        Controller --> UI : list
+        deactivate Controller
+
+        UI --> Actor : Mostra a lista das notas
+
+deactivate Actor
+
+@enduml

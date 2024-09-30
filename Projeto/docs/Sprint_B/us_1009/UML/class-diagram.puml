@@ -1,0 +1,64 @@
+@startuml
+
+title Class Diagram (CD) - US 1009
+
+'Classes
+class ApproveRejectStudentCourseUI <<presentation>> {
+    doShow()
+}
+
+class JpaCourseRepository <<persistence>> {}
+class InMemoryCourseRepository <<persistence>> {}
+class JpaEnrollementRepository <<persistence>> {}
+class InMemoryEnrollementRepository <<persistence>> {}
+
+class Course <<domain>> {
+    +approveCourseEnrollment(Enrollement enrollment)
+    +rejectCourseEnrollment(Enrollement enrollment)
+}
+class CourseCode <<(V, #FF8B40) value object>>
+class Enrollement <<domain>> {}
+
+class ApproveRejectStudentCourseController <<application>> {
+    +Iterable<Course> listAllEnrollCourses();
+    +Iterable<Enrollment> listAllPendingEnrollments(CourseCode courseCode)
+    +Course approvedEnrollment(Course course, Enrollement enrollment)
+    +Course rejectEnrollment(Course course, Enrollement enrollment)
+}
+class ListCourseService <<application>>{
+    +Iterable<Course> allEnrollCourses()
+}
+class ListEnrollementService <<application>>{
+    +Iterable<Enrollment> allPendingEnrollments(CourseCode courseCode)
+}
+
+interface CourseRepository <<repositories>> {
+    +Iterable<Course> findAllEnrollCourses()
+    +Course save(Course course)
+}
+
+interface EnrollementRepository <<repositories>> {
+    +Iterable<Enrollment> findAllPendingEnrollments(CourseCode courseCode)
+}
+
+'Navigation
+ApproveRejectStudentCourseUI --> ApproveRejectStudentCourseController : theController
+ApproveRejectStudentCourseController --> CourseRepository : repo
+ApproveRejectStudentCourseController --> EnrollementRepository : repo
+ApproveRejectStudentCourseController --> ListCourseService : service
+ApproveRejectStudentCourseController --> ListEnrollementService : service
+ApproveRejectStudentCourseController --> Course : course
+ApproveRejectStudentCourseController --> Enrollement : enrollement
+Course --> CourseCode : courseCode
+JpaCourseRepository -> CourseRepository
+InMemoryCourseRepository -> CourseRepository
+JpaEnrollementRepository -> EnrollementRepository
+InMemoryEnrollementRepository -> EnrollementRepository
+
+'Dependencies
+ApproveRejectStudentCourseUI -[dashed]-> Course
+ApproveRejectStudentCourseUI -[dashed]-> Enrollement
+ListCourseService -[dashed]-> CourseRepository
+ListEnrollementService -[dashed]-> EnrollementRepository
+
+@enduml

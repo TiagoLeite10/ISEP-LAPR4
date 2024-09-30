@@ -1,0 +1,41 @@
+@startuml
+
+title Class Diagram (CD) - US 2006
+
+'Classes
+class ListGradesByCourseUI <<presentation>> {
+    doShow()
+}
+
+class ListGradesByCourseController <<application>> {
+    +listTeacherCourses()
+    +listGradesByCourse()
+}
+
+class TakenExame <<domain>> {
+}
+
+class Course <<domain>> {
+}
+
+
+interface CourseRepository <<repositories>> {
+    +Iterable<Course> findAllTeacherCourses(Teacher teacher)
+}
+
+interface TakenExamRepository <<repositories>> {
+    +Iterable<GradePerStudent> findAllGradesByCourse(Course course)
+}
+
+'Navigation
+ListGradesByCourseUI --> ListGradesByCourseController : theController
+ListGradesByCourseController --> TakenExame : takenExam
+ListGradesByCourseController --> Course : course
+ListGradesByCourseController ----> TakenExamRepository : repo
+ListGradesByCourseController ----> CourseRepository : repo
+
+'Dependencies
+ListGradesByCourseUI -[dashed]-> TakenExame
+ListGradesByCourseUI -[dashed]-> Course
+
+@enduml

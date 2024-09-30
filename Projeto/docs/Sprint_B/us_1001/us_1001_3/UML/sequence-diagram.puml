@@ -1,0 +1,56 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 1001_3
+autonumber
+
+actor Gerente as Actor
+participant ListUserUI as UI <<presentation>>
+control ListUsersController as Controller <<application>>
+participant UserManagementService as Service <<application>>
+participant "user:SystemUser" as Domain <<domain>>
+participant PersistenceContext as Persistence <<persistence>>
+participant RepositoryFactory as Factory <<factory>>
+database UserRepository as Repository <<repository>>
+
+
+activate Actor
+    Actor -> UI : Pede para listar os utilizadores do sistema
+    activate UI
+        UI -> Controller : create
+        Controller -> Service : create
+
+        UI -> Controller : listAllUsers()
+        activate Controller
+
+        Controller -> Service : allUsers()
+        activate Service
+
+        Service -> Persistence : repositories()
+        activate Persistence
+
+        Persistence -> Factory : create
+        activate Factory
+        Persistence -> Factory : users()
+        deactivate Persistence
+
+        Factory -> Repository : create
+        deactivate Factory
+        activate Repository
+
+        Service -> Repository : list = findAll()
+
+        Repository --> Service :
+        deactivate Repository
+        Service --> Controller : list
+        deactivate Service
+        Controller --> UI : list
+        deactivate Controller
+
+        UI --> Actor : Mostra a lista de utilizadores do sistema
+
+deactivate Actor
+
+@enduml

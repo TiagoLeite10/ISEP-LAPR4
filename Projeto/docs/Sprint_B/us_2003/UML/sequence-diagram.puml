@@ -1,0 +1,64 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 2003
+autonumber
+
+actor Professor as Actor
+participant ListCourseExamsUI as UI <<presentation>>
+control ListCourseExamsController as Controller <<application>>
+participant ListCourseService as CourseService <<application>>
+participant ListExamService as ExamService <<application>>
+participant "course:Course" as CourseDomain <<domain>>
+participant "exam:Exam" as ExamDomain <<domain>>
+database CourseRepository as CourseRepository <<repository>>
+database ExamRepository as ExamRepository <<repository>>
+
+activate Actor
+    Actor -> UI : Pede para listar todos os exames de uma disciplina
+    activate UI
+        UI -> Controller : create
+        Controller -> CourseService : create
+        UI -> Controller : listAllTeacherCourses()
+        activate Controller
+
+        Controller -> CourseService : allTeacherCourses(teacher)
+        activate CourseService
+
+        CourseService -> CourseRepository : list = findAllTeacherCourses(teacher)
+        activate CourseRepository
+
+        CourseRepository --> CourseService :
+        deactivate CourseRepository
+        CourseService --> Controller : list
+        deactivate CourseService
+        Controller --> UI : list
+        deactivate Controller
+
+        UI --> Actor : Mostra a lista de disciplinas que leciona
+
+        Actor -> UI : Seleciona a disciplina
+
+        UI -> Controller : listAllCourseExams(courseCode)
+        activate Controller
+
+        Controller -> ExamService : allCourseExams(courseCode)
+        activate ExamService
+
+        ExamService -> ExamRepository : list = findAllCourseExams(courseCode)
+        activate ExamRepository
+
+        ExamRepository --> ExamService :
+        deactivate ExamRepository
+        ExamService --> Controller : list
+        deactivate ExamService
+        Controller --> UI : list
+        deactivate Controller
+
+        UI --> Actor : Mostra a lista de todos os exames da disciplina
+    deactivate UI
+deactivate Actor
+
+@enduml

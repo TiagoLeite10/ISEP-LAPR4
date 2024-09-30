@@ -1,0 +1,56 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 3006
+autonumber
+
+actor "Utilizador" as Actor
+participant ":Sistema" as System
+
+activate Actor
+
+Actor -> System : Pede para criar um post-it num quadro (board)
+activate System
+
+System --> Actor : Mostra a lista de quadros ativos em que o utilizador é dono ou tem permissões de escrita
+System --> Actor : Pede para escolher o quadro a criar o post-it
+deactivate System
+
+Actor -> System : Escolhe o quadro a criar o post-it
+activate System
+
+System --> Actor : Pede para inserir o conteúdo e tipo do post-it
+deactivate System
+
+Actor -> System : Insere o conteúdo e tipo do post-it
+activate System
+
+System --> Actor : Mostra a lista de linhas do quadro
+System --> Actor : Pede para escolher a linha da posição inicial do post-it
+deactivate System
+
+Actor -> System : Escolhe a linha da posição inicial do post-it
+activate System
+
+System --> Actor : Mostra a lista de colunas do quadro
+System --> Actor : Pede para escolher a coluna da posição inicial do post-it
+deactivate System
+
+Actor -> System : Escolhe a coluna da posição inicial do post-it
+activate System
+
+System --> Actor : Mostra a informação do post-it a criar
+System --> Actor : Pede confirmação da operação
+deactivate System
+
+Actor -> System : Confirma a operação
+activate System
+
+System --> Actor : Informa o sucesso da operação
+deactivate System
+
+deactivate Actor
+
+@enduml

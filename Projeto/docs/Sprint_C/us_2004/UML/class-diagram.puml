@@ -1,0 +1,74 @@
+@startuml
+
+'Classes
+class TakeExamUI <<presentation>> {
+}
+
+class TakeExamController <<application>> {
++ Iterable<Course> findAllStudentApprovedCoursesInProgressWithActualExams()
++ Iterable<Exam> listAllAvailableExamsOfTheCourse( theCourse)
+
++ String getExamQuestionsString(theExam)
++ float parseExamAnswers(filePath, theExam)
++ String getExamFeedback(theExam)
+}
+
+class ExamService <<service>> {
+
++ float parseAndHandleExamGrade(filePath, theExam)
+
++ Map<String, Integer> countAllTypeQuestionsQuantityInExam(theExam)
++ float calculateExamMaxGrade(theExam)
+}
+
+class Student <<domain>> {
+}
+
+class Course <<domain>> {
+}
+
+class Exam <<domain>> {
++ Exam transformInExamObject()
+}
+
+class Exam <<domain>> {
++ String examQuestionsToString()
+}
+
+class ResolutionMain <<lprog>> {
++ parseWithVisitor(fileToPath, theExam)
+
+}
+
+class CourseRepository <<repository>> {
++ Iterable<Course> findAllStudentApprovedCoursesInProgressExams(student)
+}
+
+class QuestionRepository <<repository>> {
+
+}
+
+class ExamRepository <<repository>> {
++  Iterable<Exam> listAllAvailableExamsOfACourse(courseCode)
+}
+
+'Dependencies
+TakeExamUI -[dashed]-> Exam
+
+'Navigation
+TakeExamUI --> TakeExamController : theController
+
+
+TakeExamController --> Student : theStudent
+TakeExamController --> Course : theCourse
+TakeExamController -->  Exam : theExam
+TakeExamController -->  Exam : theExam
+TakeExamController --> ResolutionMain
+TakeExamController --> ExamService
+TakeExamController --> CourseRepository
+ExamService --> QuestionRepository
+
+ExamService --> ExamRepository : examRepo
+
+
+@enduml

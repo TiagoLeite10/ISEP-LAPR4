@@ -1,0 +1,40 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 2001
+autonumber
+
+actor "Professor" as Actor
+participant ":Sistema" as System
+
+activate Actor
+
+Actor -> System : Pede para adicionar/atualizar exame a um repositório
+activate System
+
+System --> Actor : Mostra os cursos que leciona e em progresso e pede para escolher um curso
+deactivate System
+
+Actor -> System : Escolhe o curso a que quer adicionar o exame
+activate System
+
+System --> Actor : Pede para introduzir o caminho do ficheiro
+deactivate System
+
+Actor -> System : Introduz o caminho do ficheiro
+activate System
+
+System --> Actor : Mostra os dados do exame e pede confirmação para as adicionar/atualizar
+deactivate System
+
+Actor -> System : Confirma a operação
+activate System
+
+System --> Actor : Informa o sucesso da operação
+deactivate System
+
+deactivate Actor
+
+@enduml

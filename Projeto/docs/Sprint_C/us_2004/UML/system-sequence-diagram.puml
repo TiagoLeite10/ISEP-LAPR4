@@ -1,0 +1,46 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 2004
+autonumber
+
+actor "Student" as Student
+participant ":Sistema" as Sistema
+
+activate Student
+
+    Student -> Sistema : Pede para responder a um exame
+    activate Sistema
+        Sistema --> Student : Mostra a lista de disciplinas em que o estudante está inscrito
+        Sistema --> Student : Pede para escolher a disciplina da qual pretende fazer um exame
+    deactivate Sistema
+
+    Student -> Sistema : Escolhe a disciplina
+    activate Sistema
+        Sistema --> Student : Lista todos os exames disponíveis da disciplina selecionada
+        Sistema --> Student : Pede para selecionar o exame que pretende realizar
+    deactivate Sistema
+
+    Student -> Sistema : Escolhe o exame que pretende   que pretende realizar
+    activate Sistema
+        Sistema --> Student : Apresenta o exame
+        Sistema --> Student : Pede ao utilizador para inserir o caminho do ficheiro com a resolução do exame
+    deactivate Sistema
+
+    Student -> Sistema : Insere o caminho do ficheiro com a resolução do exame
+    activate Sistema
+        Sistema --> Student : Imprime as respostas do estudante que serão dadas ao exame
+        Sistema --> Student : Pede confirmação para a finalização do exame
+    deactivate Sistema
+
+    Student -> Sistema : Confirma operação
+    activate Sistema
+        Sistema --> Student : Apresenta a nota obtida e o feedback do exame
+        Sistema --> Student : Informa o sucesso da operação
+    deactivate Sistema
+
+deactivate Student
+
+@enduml

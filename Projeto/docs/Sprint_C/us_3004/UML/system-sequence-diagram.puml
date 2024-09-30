@@ -1,0 +1,53 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 3004
+autonumber
+
+actor "Utilizador" as Actor
+participant ":Sistema" as System
+
+activate Actor
+
+Actor -> System : Pede para partilhar uma board
+activate System
+
+System --> Actor : Mostra a lista de board ativas em que o utilizador é dono
+System --> Actor : Pede para escolher a board a partilhar
+deactivate System
+
+Actor -> System : Escolhe a board a partilhar
+activate System
+
+System --> Actor : Mostra os utilizadores disponiveis à partilha
+deactivate System
+
+Actor -> System : Escolhe os utilizadores
+activate System
+
+loop Para cada utilizador escolhido
+
+System --> Actor : Pede para escolher a permissão de escrita ou leitura
+deactivate System
+
+Actor -> System : Escolhe a permissão do utilizador
+activate System
+
+end
+
+System --> Actor : Mostra os utilizador convidados
+
+System --> Actor : Pede confirmação da operação
+deactivate System
+
+Actor -> System : Confirma a operação
+activate System
+
+System --> Actor : Informa o sucesso da operação
+deactivate System
+
+deactivate Actor
+
+@enduml

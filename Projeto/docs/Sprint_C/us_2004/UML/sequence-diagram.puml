@@ -1,0 +1,88 @@
+@startuml
+
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SSD) - US 2004
+autonumber
+
+actor "Student" as Student
+participant TakeExamUI as ui <<presentation>>
+control TakeExamController as controller <<application>>
+
+participant ExamService as examService <<application>>
+
+participant "theStudent:Student" as theStudent <<domain>>
+participant "theCourse:Course" as theCourse <<domain>>
+participant "theExam:Exam" as theExam <<domain>>
+participant "theExam:Exam" as theExam <<domain>>
+
+participant ResolutionMain as resolutionMain <<lprog>>
+
+database CourseRepository as courseRepository <<repository>>
+database QuestionRepository as questionRepository <<repository>>
+database ExamRepository as examRepository <<repository>>
+
+activate Student
+
+    Student -> ui : Pede para responder a um exame
+    activate ui
+        ui -> controller : create
+        controller -> examService : create
+
+        ui -> controller : allStudentCourses = findAllStudentApprovedCoursesInProgressExams()
+        activate controller
+            controller -> courseRepository : findAllStudentApprovedCoursesInProgressExams(theStudent)
+        deactivate controller
+
+        ui -> ui : Mostra a lista de disciplinas em que o estudante está inscrito
+        ui --> Student : Pede para escolher a disciplina da qual pretende fazer um exame
+
+        Student -> ui : Escolhe a disciplina
+        ui -> controller : allExamsOfTheCourse = listAllAvailableExamsOfTheCourse(theCourse)
+        activate controller
+            controller -> examRepository : listAllAvailableExamsOfACourse(courseCode)
+        deactivate controller
+
+        ui --> ui : Lista todos os exames disponíveis da disciplina selecionada
+        ui --> Student : Pede para selecionar o exame que pretende realizar
+
+        Student -> ui : Escolhe o exame que pretende realizar
+
+
+
+
+
+        ui -> ui : Apresenta o exame
+        ui --> Student : Pede ao utilizador para inserir o caminho do ficheiro com a resolução do exame
+
+        Student -> ui : Insere o caminho do ficheiro com a resolução do exame
+        ui -> controller : obtainedGrade = parseExamAnswers(fileToPath, theExam)
+        activate controller
+            controller -> examService : parseAndHandleExamGrade(filePath, theExam)
+            activate examService
+                examService -> resolutionMain : parseWithVisitor(fileToPath, theExam)
+                examService -> examService : calculateExamMaxGrade(theExam)
+                activate examService
+                deactivate examService
+            deactivate examService
+        deactivate controller
+
+        ui -> ui : Imprime as respostas do estudante que serão dadas ao exame
+        ui --> Student : Pede confirmação para a finalização do exame
+
+        Student -> ui : Confirma operação
+
+        ui -> controller : examFeedback = getExamFeedback(theExam)
+        activate controller
+            controller -> theExam : feedback()
+        deactivate controller
+
+        ui -> ui : Apresenta a nota obtida e o respetivo feedback do exame
+        ui --> Student : Informa o sucesso da operação
+    deactivate ui
+
+deactivate Student
+
+@enduml

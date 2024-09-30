@@ -1,0 +1,50 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 4004
+autonumber
+
+actor Utilizador as Actor
+participant ListParticipationMeetingUI as UI <<presentation>>
+control ListParticipationMeetingController as Controller <<application>>
+participant "user:SystemUser" as UserDomain <<domain>>
+participant "meeting:Meeting" as MeetingDomain <<domain>>
+database MeetingRepository as Repository <<repository>>
+
+activate Actor
+    Actor -> UI : Pede para listar todos os participantes na reunião
+    activate UI
+        UI -> Controller : create
+        UI -> Controller : listAllMeetings()
+        activate Controller
+
+        Controller -> Repository : list = findAllMeetings(user)
+        activate Repository
+
+        Repository --> Controller :
+        deactivate Repository
+        Controller --> UI : list
+        deactivate Controller
+
+    UI --> Actor : Mostra a lista de todas as reuniões que participa
+
+    Actor -> UI : Seleciona a reunião que pretende saber a lista de todos os participantes numa reunião e \n o respetivo status
+
+        UI -> Controller : listAllParticipants(meeting)
+        activate Controller
+
+        Controller ->  MeetingDomain : list = allParticipants()
+        activate  MeetingDomain
+
+        deactivate  MeetingDomain
+        Controller --> UI : list
+        deactivate Controller
+
+    UI --> Actor : Mostra a lista de todos os participantes e o status
+
+    deactivate UI
+deactivate Actor
+
+@enduml

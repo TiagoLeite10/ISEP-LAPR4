@@ -1,0 +1,61 @@
+@startuml
+
+title Class Diagram (CD) - US 3004
+
+'Classes
+class ShareBoardUI <<presentation>> {
+    #boolean doShow()
+}
+
+class ShareBoardController <<application>> {
+    +listAllBoardsOwned()
+    +listAllUsersAvailableToShare(Board theBoard)
+    +shareBoard(Board theBoard, Iterable<Pair<SystemUser, AccessPermission>> users)
+}
+
+class Board <<domain>> {
+    -title : String
+    -boardElementLineSet : Set<BoardElementLine>
+    -boardElementColumnSet : Set<BoardElementColumn>
+    -List<PostIt> postIts
+    +changePostIt(oldPostIt : PostIt, content : String)
+    +changePostIt(oldPostIt : PostIt, line : int, column : int)
+    -changePostIt(oldPostIt : PostIt, newPostIt : PostIt)
+    +Set<BoardElementLine> boardElementLine()
+    +Set<BoardElementColumn> boardElementColumn()
+}
+
+interface BoardRepository <<repositories>> {
+    +Iterable<Board> findAllUsersAvailableToShare(boardTitle : String);
+    +Board save(theBoard : Board)
+}
+
+class JpaBoardRepository <<persistence>> {}
+
+class InMemoryBoardRepository <<persistence>> {}
+
+class SystemUser <<domain>> {}
+
+class Username <<(V, #FF8B40) value object>>
+
+class CsvSharedBoardProtocolProxy <<csvprotocol>> {
+    +Iterable<Board> getAllBoardsOwned()
+    +Iterable<SystemUser> getAllUsersAvailableToShare(boardTitle : String)
+    +Board saveBoard(theBoard : Board)
+}
+
+'Navigation
+ShareBoardUI --> ShareBoardController : theController
+ShareBoardController --> CsvSharedBoardProtocolProxy : proxy
+ShareBoardController --> Board : theBoard
+ShareBoardController ---> SystemUser : user
+CsvSharedBoardProtocolProxy --> BoardRepository : boardRepo
+BoardRepository --> JpaBoardRepository
+BoardRepository --> InMemoryBoardRepository
+SystemUser -> Username
+
+'Dependencies
+ShareBoardUI -[dashed]-> Board
+ShareBoardUI -[dashed]--> SystemUser
+
+@enduml

@@ -1,0 +1,128 @@
+@startuml
+
+top to bottom direction
+
+title Domain Classes (DC) - US 2004
+
+hide methods
+skinparam classAttributeIconSize 0
+
+'Student
+package "<<aggregate>> Student" {
+    entity Student <<entity>> <<root>>
+    class MechanographicNumber <<(V, #FF8B40) value object>>
+}
+
+'Course
+package "<<aggregate>> Course" {
+    entity Course <<entity>> <<root>>
+    class CourseCode <<(V, #FF8B40) value object>>
+    class CourseStatus <<(V, #FF8B40) value object>>
+    note bottom
+        Diagrama de estados
+        disponível com o
+        nome "course-status"
+        na documentação da
+        US G002
+    end note
+}
+
+'Enrollment
+package "<<aggregate>> Enrollment" {
+    entity Enrollment <<entity>> <<root>>
+    class EnrollmentStatus <<(V, #FF8B40) value object>>
+    note bottom
+        Diagrama de estados
+        disponível com o nome
+        "enrollment-status"
+        na documentação da
+        US G002
+    end note
+}
+
+'FormativeExam
+package "<<aggregate>> Exam" {
+    entity Exam <<entity>> <<root>> {
+    }
+
+    entity ExamSection <<entity>> {
+    }
+}
+
+class ExamTitle <<(V, #FF8B40) value object>>
+class ExamDateTime <<(V, #FF8B40) value object>> {
+    openingDateTime
+    closingDateTime
+}
+
+'Header
+entity Header <<entity>>>
+class HeaderTypeNote <<(V, #FF8B40) value object>>
+class HeaderTypeFeedback <<(V, #FF8B40) value object>>
+class HeaderDescription <<(V, #FF8B40) value object>>
+
+'Section
+class SectionDescription <<(V, #FF8B40) value object>>
+
+'Question
+package "<<aggregate>> Question" {
+    'Answer
+    entity Answer <<entity>>> {
+        correctAnswer
+        feedback
+    }
+
+    'Question
+    abstract Question <<abstract>>> {
+        text
+    }
+    class QuestionScore <<(V, #FF8B40) value object>>
+
+    entity Matching <<entity>>>
+    entity MultipleChoice <<entity>>>
+    entity ShortAnswer <<entity>>>
+    entity Numerical <<entity>>>
+    entity SelectMissingWords <<entity>>>
+    entity TrueFalse <<entity>>>
+}
+
+'Value objects
+Student -down-> MechanographicNumber
+
+Course -down-> CourseCode
+Course -down-> CourseStatus
+
+Enrollment -down-> EnrollmentStatus
+
+Exam -down-> ExamTitle
+Exam -down-> ExamDateTime
+Exam -down-> Header
+
+ExamSection -down-> SectionDescription
+
+Header -down-> HeaderTypeNote
+Header -down-> HeaderTypeFeedback
+Header -down-> HeaderDescription
+
+Question -left-> QuestionScore
+
+Matching -up-|> Question
+MultipleChoice -up-|> Question
+ShortAnswer -up-|> Question
+Numerical -up-|> Question
+SelectMissingWords -up-|> Question
+TrueFalse -up-|> Question
+
+'Relations
+Course "1" --> "0..*" Enrollment : has >
+Course "1" --> "0..*" Exam : has >
+Course "1" --> "0..*" Question : has >
+
+Enrollment "1..*" --> "1" Student : has >
+
+Exam "1" --> "1..*" ExamSection : has >
+
+Question "1" --> "1..*" Answer : has >
+
+
+@enduml

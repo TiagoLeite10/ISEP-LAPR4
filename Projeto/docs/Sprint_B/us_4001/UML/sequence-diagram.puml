@@ -1,0 +1,88 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam handwritten true
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 4001
+autonumber
+
+actor User as Actor
+participant CreateMeetingUI as UI <<presentation>>
+control CreateMeetingController as Controller <<application>>
+participant MeetingBuilder as Builder <<builder>>
+participant "meeting:Meeting" as MeetingDomain <<domain>>
+participant UserManagementService as Service <<application>>
+database UserRepository as UserRepository <<repository>>
+database MeetingRepository as MeetingRepository <<repository>>
+
+activate Actor
+
+    Actor -> UI : Pede para marcar uma reunião
+    activate UI
+
+        UI -> Controller : create
+
+        Controller -> Service : create
+
+        UI --> Actor : Pede a informação sobre a reunião
+
+        Actor -> UI : Data, hora, duração
+
+        UI -> Controller : addMeeting(date, duration)
+            activate Controller
+
+               Controller -> Builder : create
+               Controller -> Builder : createMeeting()
+                        activate Builder
+
+                        Builder -> MeetingDomain  : createMeeting(date, duration)
+                        activate MeetingDomain
+
+                            MeetingDomain --> Builder  : meeting
+
+                        deactivate MeetingDomain
+                        Builder --> Controller  : meeting
+                    deactivate Builder
+               Controller -> MeetingRepository : save(meeting)
+               Controller --> UI : meeting
+            UI --> Actor : Reunião criado com sucesso
+
+            deactivate Controller
+            UI -> Controller : listAllUsers()
+               activate Controller
+
+                    Controller -> Service: listAllUsers()
+                    activate Service
+
+                       Service -> UserRepository : list = findAll()
+                       activate UserRepository
+
+                       UserRepository -> Service : list
+                       deactivate UserRepository
+                     Service-> Controller: list
+                    deactivate Service
+                    Controller -> UI : list
+               deactivate Controller
+
+            UI --> Actor : Lista os utilizadores existentes
+            Actor -> UI : Selecionar os utilizadores para serem convidados para a reunião
+
+            UI -> Controller : inviteUsers(meeting, users)
+            activate Controller
+
+            Controller -> MeetingDomain : inviteUsersList(users)
+            
+                activate MeetingDomain
+                deactivate MeetingDomain
+            Controller -> MeetingRepository : save(meeting)
+               Controller --> UI : meeting
+
+
+            deactivate Controller
+
+        UI --> Actor : Informação de sucesso da operação
+    deactivate UI
+deactivate Actor
+
+@enduml

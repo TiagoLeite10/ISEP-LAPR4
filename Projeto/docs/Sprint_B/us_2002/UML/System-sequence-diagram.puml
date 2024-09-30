@@ -1,0 +1,23 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 2002
+
+autonumber
+
+actor "Aluno" as USR
+participant ":Sistema" as SYS
+
+activate USR
+
+    USR -> SYS : Pede para listar todos os exames futuros
+    activate SYS
+
+    SYS --> USR : Mostra a lista de todos os exames futuros
+    deactivate SYS
+
+deactivate USR
+
+@enduml

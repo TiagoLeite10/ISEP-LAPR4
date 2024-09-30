@@ -1,0 +1,28 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title System Sequence Diagram (SSD) - US 2006
+autonumber
+
+actor "Professor" as Actor
+participant ":Sistema" as System
+
+activate Actor
+
+Actor -> System : Pede para listar as notas por cursos
+activate System
+
+System --> Actor : Mostra os cursos que ensina e pede para escolher um curso
+deactivate System
+
+Actor -> System : Escolhe o curso
+activate System
+
+System --> Actor : Mostra as notas desse curso
+deactivate System
+
+deactivate Actor
+
+@enduml

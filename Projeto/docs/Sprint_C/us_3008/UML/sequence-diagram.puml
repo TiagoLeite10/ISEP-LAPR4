@@ -1,0 +1,80 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+title Sequence Diagram (SD) - US 3008
+autonumber
+
+actor Utilizador as Actor
+participant UndoLastChangePostItUI as UI <<presentation>>
+control UndoLastChangePostItController as Controller <<application>>
+participant CsvSharedBoardProtocolProxy as Proxy <<csvprotocol>>
+participant "thePostIt:PostIt" as PostItDomain <<domain>>
+participant "theBoard:Board" as BoardDomain <<domain>>
+database BoardRepository as BoardRepository <<repository>>
+database PostItRepository as PostItRepository <<repository>>
+
+activate Actor
+    Actor -> UI : Pede para desfazer a última alteração de um post-it num quadro (board)
+    activate UI
+        UI -> Controller : create
+        UI -> Controller : listAllBoardsWithPermissionWrite()
+
+        activate Controller
+            Controller -> Proxy : getAllBoardsWithPermissionWrite()
+        deactivate Controller
+        activate Proxy
+            Proxy -> BoardRepository : findAllBoardsWithPermissionWrite(user)
+        deactivate Proxy
+
+    UI --> UI : Mostra a lista de quadros ativos em que o  utilizador \n é dono ou tem permissões de escrita
+
+    UI --> Actor : Pede para escolher o quadro
+
+    Actor -> UI : Escolhe o quadro
+
+        deactivate Controller
+
+        UI -> Controller : listAllExistingPostIts(theBoard)
+        activate Controller
+            Controller -> Proxy : getAllExistingPostIts(title)
+        deactivate Controller
+        activate Proxy
+            Proxy -> PostItRepository : findAllExistingPostIts(title)
+        deactivate Proxy
+
+    UI --> UI : Mostra a lista de post-it
+
+    UI --> Actor : Pede para inserir o post-it a desfazer a ultima alteração
+
+    Actor -> UI : Insere o post-it
+    UI -> Controller : findOldPostIt(postIt)
+
+    activate Controller
+    Controller -> PostItDomain : oldPostIt()
+    deactivate Controller
+
+    UI --> UI : Mostra a informação do post-it anterior
+
+    UI --> Actor : Pede confirmação da operação
+
+    Actor -> UI : Confirma a operação
+    UI -> Controller : removePostIt(thePostIt, theBoard)
+
+    activate Controller
+        Controller -> BoardDomain : removePostIt(thePostIt)
+        Controller -> Proxy : saveBoard(theBoard)
+
+        activate Proxy
+            Proxy -> BoardRepository : save(theBoard)
+        deactivate Proxy
+
+        Controller --> UI : theBoard
+     deactivate Controller
+
+    UI --> Actor : Informa o sucesso da operação
+    deactivate UI
+deactivate Actor
+
+@enduml
